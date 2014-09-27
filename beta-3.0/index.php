@@ -230,7 +230,7 @@
 			<span id="span_noti"><?php echo $result_count;?></span>
 			<form id="form" name="id_form" action="id_judge.php" method="POST" target="tonyy" style="margin-bottom: 0px;" autocomplete="off">
 			<img id="laser" src="img/laser.png"/>
-				<input id="id_search" style="ime-mode: disabled" type="text" name="id_search" placeholder="Scan ID" value=""><br>
+				<input id="id_search" style="ime-mode: disabled" type="text" name="id_search" placeholder="Scan ID" value="100306082"><br>
 				<div class="submit"><input type="submit" value="" onclick="CKAddGust2('id_search','errors','id_search');" id="submit"><span class="ping1"></span><span class="ping2"></span><span class="ping3"></span></div>
 			</form>
 			<input id="snowman" type="button" placeholder="" onClick="window.location='main_console/index.php'">

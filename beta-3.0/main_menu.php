@@ -115,7 +115,7 @@
 						<label></label>
 						<!-- in order to clean the text of equipment_search_0 immediately to let user input next ID (function:cleanandclear)and 
 							 have somewhere to store that equipment ID temporary, we set up equipment_search_1 as a hidden text to record that.-->
-						<input id="equipment_search_0" style="ime-mode: disabled" type="text" placeholder="Scan ID" name="equipment_id_search_0">
+						<input id="equipment_search_0" style="ime-mode: disabled" type="text" placeholder="Scan ID" name="equipment_id_search_0" value="DVSNYXA1001">
 						<input id="equipment_search_1" type="hidden" value="" name="equipment_id_search_1">
 						<input id="submit3" type="submit" value=""   onclick="cleanandclear();">
 						
@@ -451,6 +451,8 @@ function send_object(value,equ_id,valuee){
 				sub_c_arr[position].parentNode.querySelectorAll('[name=lbl_'+e_class+']')[0].style.color="blue";
 				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].className = "ok";
 				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].src = "img/ok.png";
+				
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=button')[0].disabled = false;
 
 				var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
 				for(var i=0;i<arr.length;i++){
