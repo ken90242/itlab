@@ -101,7 +101,7 @@ if(isset($_POST["txtara"]) ) {
 		}
 
 		.sticky {
-			background: url('https://raw.github.com/Arbaoui-Mehdi/Sticky-Notepaper/master/images/noise.png') repeat #f3efd1;
+			background: repeat #f3efd1;
 			width:100%;
 			height: 100%;
 			border:1px solid #f3f0d3;

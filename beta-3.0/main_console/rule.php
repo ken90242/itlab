@@ -131,7 +131,7 @@
 				echo '</tr><tr><th>子類別</th>';
 				while($query_row1 = mysql_fetch_assoc($query_run1)) {
 					if(isset($query_row1['subcategory'])){
-						echo '<td style="text-align:center">'.substr($query_row1['subcategory'],0,-1).'</td>';
+						echo '<td style="text-align:center">'.$query_row1['subcategory'].'</td>';
 					}else{
 						echo '<td style="text-align:center">無</td>';
 					}
@@ -142,13 +142,25 @@
 			
 		</table>
 		<form action="" method="POST" style="width:800px;">
-			<input type="radio" name="Psubclass" onclick="document.getElementById('Psubclass_new').style.display='block';document.getElementById('Psubclass_remove').style.display='none';">新增
+			<input type="radio" name="Psubclass" onclick="document.getElementById('Psubclass_new').style.display='block';document.getElementById('Psubclass_remove').style.display='none';" checked>新增
 			<input type="radio" name="Psubclass" onclick="document.getElementById('Psubclass_remove').style.display='block';document.getElementById('Psubclass_new').style.display='none';">刪除
+			<div id="Psubclass_new">
+				<label>父類別:  </label><select name="parent_class_n">
+				<?php
+					echo '<option disabled selected>請選擇</option>'.$total_class_option;
+				?>
+				</select>
+				<label>子類別:  </label><select name="child_class_n">
+					
+				</select>
+				<input type="submit" value="確定新增" name="new_subclass" disabled>
+			</div>
 			<div id="Psubclass_remove" style="display:none">
 				<label>父類別:  </label><select name="parent_class_d">
 				<?php
 					$sql4 = "SELECT `e_class` FROM `setting` WHERE `subcategory` IS NOT NULL";
 					if($query_run =  mysql_query($sql4)){
+							$parent_option = '<option disabled selected>請選擇</option>';
 						while ($query_row = mysql_fetch_assoc($query_run)) {
 							$parent_option = $parent_option.'<option value="'.$query_row['e_class'].'">'.$query_row['e_class'].'</option>';
 						}
@@ -156,21 +168,10 @@
 					echo $parent_option;
 				?>
 				</select>
-				<label>子類別:  </label><select name="child_class_d" disabled>
+				<label>子類別:  </label><select name="child_class_d">
 					
 				</select>
-				<input type="submit" value="確定刪除"></input>
-			</div>
-			<div id="Psubclass_new" style="display:none">
-				<label>父類別:  </label><select name="parent_class_n">
-				<?php
-					echo $total_class_option;
-				?>
-				</select>
-				<label>子類別:  </label><select name="child_class_n" disabled>
-					
-				</select>
-				<input type="submit" value="確定新增"></input>
+				<input type="submit" value="確定刪除" name="remove_subclass" disabled>
 			</div>
 		</form>
 	</div>	
@@ -297,6 +298,38 @@
 		}
 		
 	}
+	if(!is_null(@$_POST["new_subclass"])){
+		$parent_class_n = $_POST["parent_class_n"];
+		$child_class_n = $_POST["child_class_n"];
+		$insert_subclass_notnull = "UPDATE `test`.`setting` SET `subcategory` = CONCAT(subcategory,'".$child_class_n.";') WHERE `setting`.`e_class` = '".$parent_class_n."' AND `subcategory` IS NOT NUlL";
+		$insert_subclass_null = "UPDATE `test`.`setting` SET `subcategory` = '".$child_class_n.";' WHERE `setting`.`e_class` = '".$parent_class_n."' AND `subcategory` IS NUlL";
+		if((mysql_query($insert_subclass_notnull))&&(mysql_query($insert_subclass_null))){
+			echo "<SCRIPT Language=javascript>";
+			echo "console.log('1')";
+			echo "window.alert('已新增子類別".$child_class_d."從父類別".$parent_class_d."!')";
+			echo "</SCRIPT>";
+			BackToIndexPage();
+		}else{
+			echo mysql_error();
+		}
+		
+	}
+	if(!is_null(@$_POST["remove_subclass"])){
+		$parent_class_d = $_POST["parent_class_d"];
+		$child_class_d = $_POST["child_class_d"];
+		$remove_subclass = "UPDATE `test`.`setting` SET `subcategory` = REPLACE(`subcategory`, '".$child_class_d.";','') WHERE `setting`.`e_class` = '".$parent_class_d."' AND `subcategory` IS NOT NULL";
+		$setNull = "UPDATE `test`.`setting` SET `subcategory` = NULL WHERE `setting`.`subcategory` = ''";
+		if(mysql_query($remove_subclass)){
+			mysql_query($setNull);
+			echo "<SCRIPT Language=javascript>";
+			echo "window.alert('已刪除子類別".$child_class_d."從父類別".$parent_class_d."!')";
+			echo "</SCRIPT>";
+			BackToIndexPage();
+		}else{
+			echo mysql_error();
+		}
+		
+	}
 	function BackToIndexPage(){
 		echo "<script language=\"javascript\">";
 		echo "window.parent.window.location.href = \"./index.php\"";
@@ -313,6 +346,7 @@
 		}
 	?>
 	$('select[name=parent_class_d]').change(function(){
+		$(this).parent().children("input[type=submit]").removeAttr('disabled');
 		var parent = $("option:selected",this).text();
 		var array = parent_class[parent].split(";");
 
@@ -322,23 +356,27 @@
 		}
 		$('select[name=child_class_d]').html(childhtml);
 	});
-	$('select[name=parent_class_n]').change(function(){
-		var parent = $("option:selected",this).text();
-		var array = parent_class[parent].split(";");
+	var child_class = [];
+	<?php
+		if($query_run0 =  mysql_query($sql)){
+			$count = 0;
+			while($query_row0 = mysql_fetch_assoc($query_run0)) {
+				echo 'child_class['.$count.'] = "'.$query_row0['e_class'].'";';
+				$count++;
+			}
+		}
+	?>
 
+	$('select[name=parent_class_n]').change(function(){
+		$(this).parent().children("input[type=submit]").removeAttr('disabled');
+		var parent = $("option:selected",this).text();
+		var array = child_class;
 		var childhtml = '';
 		for(var i=0;i<array.length;i++){
-			childhtml+='<option>'+array[i]+'</option>';
+			if(array[i]!=parent){
+				childhtml+='<option>'+array[i]+'</option>';	
+			}
 		}
 		$('select[name=child_class_n]').html(childhtml);
 	});
-	<?php
-		// $sql5 = "SELECT `e_class` FROM `setting` WHERE `subcategory` NOT IN (SELECT `subcategory` FROM `setting`) OR `subcategory` IS NULL";
-		// if($query_run =  mysql_query($sql5)){
-		// 	while ($query_row = mysql_fetch_assoc($query_run)) {
-		// 		$child_option = $child_option.'<option value="'.$query_row['e_class'].'">'.$query_row['e_class'].'</option>';
-		// 	}
-		// }
-		// echo $child_option;
-	?>
 </script>
