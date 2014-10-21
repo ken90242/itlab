@@ -52,15 +52,11 @@
 			cursor: hand;
 		}
 		#notification{
+			top:-10%;
 			width:300px;
-			/*position: fixed;*/
-		    /*overflow:hidden;*/
-			margin-right:10%;
-			/*padding-left: 30px;*/
-			float: right;
-			/*height:150px;*/
+			position: absolute;
+		    left: 70%;
 			border-radius:14px;
-			/*background-color:rgba(255,255,255,0.3);*/
 			/*display: none;*/
 			z-index: 20;
 			font-size: 8px;
@@ -440,12 +436,12 @@ $(document).ready(function(){
 		var x=0;
 		$("#span_noti").click(function(){
 			if(x%2==0){
-			   	$("#notification").fadeIn("5000")
+				$("#notification").css("visibility","visible");
 			   	$("#span_noti").css({ opacity: 1.0 });
 			   	x++;
 			}
 			else {
-				$("#notification").fadeOut("5000");
+				$("#notification").css("visibility","hidden");
 				$("#span_noti").css({ opacity: 0.5 });
 				x++;
 			}		 
@@ -584,6 +580,7 @@ $(document).ready(function(){
     		console.log('focus');
     	}
 	}
+	$('#notification').css( "visibility", "hidden" );
 });
 </script>
 </body>
