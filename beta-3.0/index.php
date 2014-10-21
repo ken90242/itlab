@@ -3,249 +3,420 @@
 	session_destroy();	
 ?>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<script src="http://code.jquery.com/jquery-latest.js"></script>
-		<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
-		<link rel="stylesheet" href="css/jquery.datetimepicker.css">
-  		<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-  		<script src="scripts/jquery.datetimepicker.js"></script>
-		<link href="css/index.css" rel="stylesheet" type="text/css"><!-- x -->
-		<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
-		<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
-		<style type="text/css">
-			#snowmanpng{
-				top:20%;
-				z-index: 90;
-			}
-			img{
-				z-index: 20;
-			}
-			ul{
-				padding-right: 40px;
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script type="text/javascript" src="scripts/iscroll.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="css/jquery.datetimepicker.css">
+  	<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+  	<script src="scripts/jquery.datetimepicker.js"></script>
+	<link href="css/index.css" rel="stylesheet" type="text/css"><!-- x -->
+	<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
+	<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
+	<style type="text/css" media="all">
+		#snowmanpng{
+			top:20%;
+			z-index: 90;
+		}
+		img{
+			z-index: 20;
+		}
+		img:hover{
+			opacity:1.0;
+		}
+		ul{
+			padding-right: 40px;
+		}
+		ul,li{
+			list-style: none;
+		}
+		#span_noti{
+			border-radius: 20px;
+			padding: 5px;
+			padding-left: 8px;
+			padding-right: 8px;
+			position:absolute;
+            margin-left:220px;				
+            margin-top: -120;
+			background-color: red;
+			color:white;
+			opacity: 0.5;
+			border-color: none;
+			font-size:7px;
+			z-index: 20;
+		}
+		#span_noti{
+			/*font-weight: bold;
+			opacity: 1;*/
+			cursor: hand;
+		}
+		#notification{
+			width:300px;
+			/*position: fixed;*/
+		    /*overflow:hidden;*/
+			margin-right:10%;
+			/*padding-left: 30px;*/
+			float: right;
+			/*height:150px;*/
+			border-radius:14px;
+			/*background-color:rgba(255,255,255,0.3);*/
+			/*display: none;*/
+			z-index: 20;
+			font-size: 8px;
+			border: #243F57 solid 2px;
+			opacity: 0.8;
+		}
+		.xdsoft_datetimepicker span{
+			color:black;
+			font-size: 12px;
+		}
+		body,ul,li {
+			padding:10px;
+			margin:0;
+		}
+		body{
+			font-size:12px;
+			-webkit-user-select:none;
+			-webkit-text-size-adjust:none;
+			font-family:helvetica;
+		}
+		#wrapper {
+			width:300px;
+			height:500px;
+			float:left;
+			position:relative;	/* On older OS versions "position" and "z-index" must be defined, */
+			z-index:21;			/* it seems that recent webkit is less picky and works anyway. */
+			overflow:hidden;
+			-webkit-border-radius:10px;
+			-moz-border-radius:10px;
+			-o-border-radius:10px;
+			border-radius:10px;
+		}
+		#scroller {
+			width:2100px;
+			height:100%;
+			float:left;
+			padding:0;
+		}
+		#scroller ul {
+			list-style:none;
+			display:block;
+			float:left;
+			width:100%;
+			height:100%;
+			padding:0;
+			margin:0;
+			text-align:left;
+		}
+		#scroller li {
+			-webkit-box-sizing:border-box;
+			-moz-box-sizing:border-box;
+			-o-box-sizing:border-box;
+			box-sizing:border-box;
+			display:block; float:left;
+			width:300px; height:160px;
+			text-align:center;
+			font-family:georgia;
+			font-size:18px;
+			line-height:140%;
+		}
+		#nav {
+			display: inline-block;
+			float: right;
+			/*width:300px;*/
+			text-align: center;
+		}
+		#current_page:hover{
+			color: black;
+			font-size: 80px;
+			font-weight: bolder;
+		}
+		#prev, #next {
+			cursor: pointer;
+			text-align: center;
+			float:left;
+			font-weight:bold;
+			font-size:14px;
+			padding:5px 0;
+			width:80px;
+		}
+		#next {
+			float:right;
+		}
+		#indicator, #indicator > li {
+			display:block; float:left;
+			list-style:none;
+			padding:0; margin:0;
+		}
+		#indicator {
+			width:110px;
+			padding:12px 0 0 30px;
+		}
+		#indicator > li {
+			text-indent:-9999em;
+			width:8px; height:8px;
+			-webkit-border-radius:4px;
+			-moz-border-radius:4px;
+			-o-border-radius:4px;
+			border-radius:4px;
+			background:#ddd;
+			overflow:hidden;
+			margin-right:4px;
+		}
+		#indicator > li.active {
+			background:#888;
+		}
+		#indicator > li:last-child {
+			margin:0;
+		}
+	</style>
+</head>
+<body onload="document.getElementById('id_search').focus();">
+<?php
+	require 'connect_database.php';
+	$result_count = 0;
+?>
+<br>		
+<div id="notification" style="margin-top: 10%;">
+	<input id="doraemon" type="hidden" value="invisible">
 
+
+	<div id="nav">
+		<div id="prev" onclick="myScroll.scrollToPage(&#39;prev&#39;, 0);return false">← prev</div>
+		<div style="display:inline;margin:0px auto;"><span id="current_page"></span></div>
+		<div id="next" onclick="myScroll.scrollToPage(&#39;next&#39;, 0);return false">next →</div>
+	</div>
+	<div id="wrapper" style="overflow: hidden;">
+		<div id="scroller" style="transition: 0ms; -webkit-transition: 0ms; transform-origin: 0px 0px 0px; position: absolute; top: 0px; left: 0px;">
+			<ul id="thelist">
+				<?php
+					$i = 0;
+					sync_correct();
+					$query_rps = "SELECT * FROM `index_faceboking` WHERE `info_progress`='processed' ORDER BY `sequence` ASC";
+					if($query_rps_run =  mysql_query($query_rps)){						
+						while ($query_rps_row = mysql_fetch_assoc($query_rps_run)) {
+							@$borrow_time = $query_rps_row[ 'borrow_time' ];
+							@$trade_sequence = $query_rps_row[ 'trade_sequence' ];
+							@$u_id = $query_rps_row[ 'u_id' ];
+							@$e_id = $query_rps_row[ 'e_id' ];
+							@$info_ass = $query_rps_row[ 'info_ass' ];
+							@$info_ass2 = $query_rps_row[ 'info_ass2' ];
+							@$info_ass3 = $query_rps_row[ 'info_ass3' ];
+							@$info_detail = $query_rps_row[ 'info_detail' ];
+							@$info_detail2 = $query_rps_row[ 'info_detail2' ];
+							@$info_detail3 = $query_rps_row[ 'info_detail3' ];
+							@$info_time = $query_rps_row[ 'info_time' ];
+							@$info_time2 = $query_rps_row[ 'info_time2' ];
+							@$info_time3 = $query_rps_row[ 'info_time3' ];
+							@$u_turn_time = $query_rps_row[ 'u_turn_time' ];
+							@$u_turn_time2 = $query_rps_row[ 'u_turn_time2' ];
+							@$u_turn_time3 = $query_rps_row[ 'u_turn_time3' ];
+
+
+							$query_uinfo = "SELECT * FROM `user` WHERE `id` = '".id_correct($u_id)."'";
+								if($query_urun =  mysql_query($query_uinfo)){
+									$query_urow = mysql_fetch_assoc($query_urun);
+									$u_name = $query_urow[ 'name' ];
+									$u_email = $query_urow[ 'email' ];
+									$u_phone = $query_urow[ 'phone' ];
+								}
+							$query_einfo = "SELECT * FROM `equipment` WHERE `id` = '".$e_id."'";
+								if($query_erun =  mysql_query($query_einfo)){
+									$query_erow = mysql_fetch_assoc($query_erun);
+									$e_name = $query_erow[ 'name' ];
+								}
+							$query_tinfo = "SELECT * FROM `trade` WHERE `sequence` = '$trade_sequence'";
+								if($query_trun =  mysql_query($query_tinfo)){
+									$query_trow = mysql_fetch_assoc($query_trun);
+									$deadline_time = $query_trow[ 'deadline_time' ];
+									$delaytimes = $query_trow[ 'delaytimes' ];
+								}
+							if(@$info_ass3){
+								@$xmlfunction = "alert('已通知三次!')";
+							}elseif(@$info_ass2) {
+								@$xmlfunction = '"xml(\''.$i.'\',\''.$e_id.'\',\''.$u_id .'\',\''.$borrow_time.'\',\''.$delaytimes.'\',\'3\',\''.$trade_sequence.'\')"';
+							}elseif(@$info_ass){
+								@$xmlfunction = '"xml(\''.$i.'\',\''.$e_id.'\',\''.$u_id .'\',\''.$borrow_time.'\',\''.$delaytimes.'\',\'2\',\''.$trade_sequence.'\')"';
+							}else{
+								@$xmlfunction = '"xml(\''.$i.'\',\''.$e_id.'\',\''.$u_id .'\',\''.$borrow_time.'\',\''.$delaytimes.'\',\'1\',\''.$trade_sequence.'\')"';
+							}	
+
+							echo '<li id="list_'.$i.'" style="font-size:6px;">';
+							echo '<form name="fb_form" method="POST">';
+							echo '<input type="checkbox" onclick="gray('.$i.');">';
+							echo '<input id="font_color_'.$i.'" type="hidden" value="gray"><br>';
+							echo '<hr>';
+							// echo '借用物品編號:'.$e_id.'<br>';
+							echo '借用物品名稱:'.$e_name.'<br>';
+							echo '借用時間:'.$borrow_time.'<br>';
+							echo '歸還期限:'.$deadline_time.'<br>';
+							echo '續借次數:'.$delaytimes.'<br>';
+							echo '<hr>';
+							echo '借用人資訊<hr>';
+							echo '學號:'.$u_id .'<br>';
+							echo '姓名:'.$u_name .'<br>';
+							echo '聯絡方式:<br><<font color="blue">EMAIL</font>>'.$u_email.'<br><<font color="blue">PHONE</font>>'.$u_phone.'<br>';
+							echo '<hr>';
+							echo '<label class="submit_'.$i.'" style="display:none;">通知助理:</label>'.'<input id="list_'.$i.'_a" class="submit_'.$i.'" type="text" style="display:none;" onclick="this.focus()">'.'<label class="submit_'.$i.'" style="display:none;"><br></label>';
+							echo '<label class="submit_'.$i.'" style="display:none;">借用人預計歸還時間:</label>'.'<input id="list_'.$i.'_u" class="submit_'.$i.' datepick" type="text" style="display:none;" onclick="this.focus()">'.'<label class="submit_'.$i.'" style="display:none;"><br></label>';
+							echo '<label class="submit_'.$i.'" style="display:none;">其他事項:</label>'.'<input id="list_'.$i.'_t" class="submit_'.$i.'" type="text" style="display:none;" onclick="this.focus()">'.'<label class="submit_'.$i.'" style="display:none;"><br></label>';
+							echo '<div id="button_'.$i.'"><input class="submit_'.$i.'" type="button" value="提交" onclick='.@$xmlfunction.' style="display:none;"></div>';
+							echo '<div id="inform'.$i.'_a" style="">'.@$info_time.'<br>通知助理:'.@$info_ass.'<br>預計歸還時間:<br>'.@$u_turn_time.'<br>備註:'.@$info_detail.'</div>';
+							echo '<div id="inform'.$i.'_b" style="">'.@$info_time2.'<br>通知助理:'.@$info_ass2.'<br>預計歸還時間:<br>'.@$u_turn_time2.'<br>備註:'.@$info_detail2.'</div>';
+							echo '<div id="inform'.$i.'_c" style="">'.@$info_time3.'<br>通知助理:'.@$info_ass3.'<br>預計歸還時間:<br>'.@$u_turn_time3.'<br>備註:'.@$info_detail3.'</div>';
+							echo '</form></li>';
+							$i++;
+							$result_count++;
+						}
+					}
+				?>
+			</ul>
+		</div>
+	</div>
+</div>
+<?php
+	function get_current_date(){ //+8 is used to adjust server's time  to the correct time
+		$datetime = date ("Y-m-d H:i:s" , mktime(date('H')+6, date('i'), date('s'), date('m'), date('d'), date('Y'))) ; 
+		return $datetime;
+	}	
+	function sync_correct(){
+		$init = "SELECT * FROM `trade_analyze`";
+		if($init_run =  mysql_query($init)){
+			while ($init_row = mysql_fetch_assoc($init_run)) {
+				$trade_sequence = $init_row['t_sequence'];
+				$query_rpt_count = mysql_query("SELECT COUNT(1) FROM `index_faceboking` WHERE `trade_sequence` = '$trade_sequence'");
+				if(mysql_result($query_rpt_count, 0)>0){
+					mysql_query("UPDATE `test`.`index_faceboking` SET `info_progress` = 'done' WHERE `trade_sequence`='$trade_sequence' LIMIT 1");
+				}
 			}
-			ul,li{
-				list-style: none;
-			}
-			#span_noti{
-				
-				border-radius: 20px;
-				
-				padding: 5px;
-				padding-left: 8px;
-				padding-right: 8px;
-				
-				position:absolute;
-                margin-left:220px;				
-                margin-top: -120;
-				background-color: red;
-				color:white;
-				opacity: 0.5;
-				border-color: none;
-				font-size:7px;
-				
-				z-index: 20;
-			}
-			#span_noti{
-				/*font-weight: bold;
-				opacity: 1;*/
-				cursor: hand;
-			}
-			#notification{
-			    overflow:auto;
-				margin-right:10%;
-				padding-left: 30px;
+		}
 			
-				/*height:150px;*/
-				border-radius:17px;
-				background-color:rgba(255,255,255,0.3);
-				display: none;
-				overflow:auto;
-				float:right;
-				z-index: 20;
+		$init = "SELECT * FROM `trade` where `t_status`='return'";
+		if($init_run =  mysql_query($init)){
+			while ($init_row = mysql_fetch_assoc($init_run)) {
+				$trade_sequence = $init_row['sequence'];
+				$query_rpt_count = mysql_query("SELECT COUNT(1) FROM `index_faceboking` WHERE `trade_sequence` = '$trade_sequence'");
+				if(mysql_result($query_rpt_count, 0)>0){
+					mysql_query("UPDATE `test`.`index_faceboking` SET `info_progress` = 'done' WHERE `trade_sequence`='$trade_sequence' LIMIT 1");
+				}
 			}
-			.xdsoft_datetimepicker span{
-				color:black;
-			  	font-size: 12px;
-			}
-		</style>
-	</head>
+		}
+	}
+	function id_correct($id_search){ //unify the ID format and ID debug
+		if(preg_match('/^(1)\d{8}$/',$id_search)){
+		    $id_search = $id_search;
+		}
+		elseif(preg_match('/^(00)\d{7}$/',$id_search)){
+			$id_search = $id_search = $id_search;;
+		}
+		elseif (preg_match('/^(1)\d{9}$/',$id_search)){
+			$id_search = substr($id_search,0,9);
+		}
+		elseif (preg_match('/^(9)\d{7}$/',$id_search)){
+			$id_search = '0'.$id_search;
+		}
+		elseif (preg_match('/^(9)\d{8}$/',$id_search)){
+			$id_search = substr('0'.$id_search,0,9);
+		}
+		elseif(($id_search == '1152542')|| ($id_search == '01152542')){
+			$id_search = '1152542';
+		}
+		else{
+			echo "<SCRIPT Language=javascript>";
+			echo "window.alert('".$id_search."不符合標準化篩選規則!(error-0xe01a000f)')";
+			echo "</SCRIPT>";
+			exit;
+		}
+		return $id_search;
+	}
+?>
+<div id="changeside">
+	<!-- form to submit ID to id_judge.php-->
+	<span id="span_noti"><?php echo $result_count;?></span>
+	<form id="form" name="id_form" action="id_judge.php" method="POST" target="tonyy" style="margin-bottom: 0px;" autocomplete="off">
+	<img id="laser" src="img/laser.png"/>
+		<input id="id_search" style="ime-mode: disabled" type="text" name="id_search" placeholder="Scan ID" value="100306082"><br>
+		<div class="submit"><input type="submit" value="" onclick="CKAddGust2('id_search','errors','id_search');" id="submit"><span class="ping1"></span><span class="ping2"></span><span class="ping3"></span></div>
+	</form>
+	<input id="snowman" type="button" placeholder="" onClick="window.location='main_console/index.php'">
+	<!-- show the ID debug info -->
+	<div id="errors"></div>
+	<div>
+	  <div id="bar"></div><!-- xprogress  -->
+	</div>			
+</div>
+<iframe name="tonyy" style="display:none"></iframe>
+<img src="img/gemini22.png"  style="display:block; margin:auto; clear:both;"  height="125" width="140" >
 	
-	<body onload="document.getElementById('id_search').focus()">
-	 	
-		<?php
-			require 'connect_database.php';
-			$result_count = 0;
-		?>
-		
-		<br>
-		<div id="notification" style="margin-top: 10%;">
-		<input id="doraemon" type="hidden" value="invisible">
-			<?php
-				$i = 0;
-				echo '<ul>';
-				sync_correct();
-				$query_rps = "SELECT * FROM `index_faceboking` WHERE `info_progress`='processed' ORDER BY `sequence` ASC";
-				if($query_rps_run =  mysql_query($query_rps)){						
-					while ($query_rps_row = mysql_fetch_assoc($query_rps_run)) {
-						@$borrow_time = $query_rps_row[ 'borrow_time' ];
-						@$trade_sequence = $query_rps_row[ 'trade_sequence' ];
-						@$u_id = $query_rps_row[ 'u_id' ];
-						@$e_id = $query_rps_row[ 'e_id' ];
-						@$info_ass = $query_rps_row[ 'info_ass' ];
-						@$info_ass2 = $query_rps_row[ 'info_ass2' ];
-						@$info_ass3 = $query_rps_row[ 'info_ass3' ];
-						@$info_detail = $query_rps_row[ 'info_detail' ];
-						@$info_detail2 = $query_rps_row[ 'info_detail2' ];
-						@$info_detail3 = $query_rps_row[ 'info_detail3' ];
-						@$info_time = $query_rps_row[ 'info_time' ];
-						@$info_time2 = $query_rps_row[ 'info_time2' ];
-						@$info_time3 = $query_rps_row[ 'info_time3' ];
-						@$u_turn_time = $query_rps_row[ 'u_turn_time' ];
-						@$u_turn_time2 = $query_rps_row[ 'u_turn_time2' ];
-						@$u_turn_time3 = $query_rps_row[ 'u_turn_time3' ];
+	
+<script type="text/javascript">
+function CKAddGust2(the_value_id,div_id,the_input_id){		
+	var valuee = document.getElementById(the_value_id).value;
+	var div = document.getElementById(div_id);
+	if(valuee == ""){
+		document.getElementById(the_input_id).focus();
+		div.textContent = "請填寫[查詢id]欄位!";
+		div.style.color = "red";
+		event.returnValue = false;
+	}
+	else if((valuee == '1152542')|| (valuee == '01152542')){
+		valuee = '1152542';
+		event.returnValue = true;
+	}
+	else if(((document.id_form.id_search.value.length>10)||(document.getElementById(the_input_id).value.length<8))&&
+		(isNaN(document.id_form.id_search.value)==true)){
+		div.textContent = "請輸入1或9開頭的9-10位數字!";
+		div.style.color = "red";
+		event.returnValue = false;
+		document.getElementById(the_input_id).value = "";
+	}
+	else if((document.id_form.id_search.value.length>10)||(document.getElementById(the_input_id).value.length<8)){
+		document.getElementById(the_input_id).focus();
+		div.textContent = "請輸入9-10位字元!";
+		div.style.color = "red";
+		event.returnValue = false;
+		document.getElementById(the_input_id).value = "";
+	}
+	else if(isNaN(document.id_form.id_search.value)==true){
+		document.getElementById(the_input_id).focus();
+		div.textContent = "請輸入數字!";
+		div.style.color = "red";
+		event.returnValue = false;
+		document.getElementById(the_input_id).value = "";
+	}
 
+	else{
+		event.returnValue = true;	
+	}
+	
+}
+</script>
+<script type="text/javascript">
+var myScroll;
 
-						$query_uinfo = "SELECT * FROM `user` WHERE `id` = '".id_correct($u_id)."'";
-							if($query_urun =  mysql_query($query_uinfo)){
-								$query_urow = mysql_fetch_assoc($query_urun);
-								$u_name = $query_urow[ 'name' ];
-								$u_email = $query_urow[ 'email' ];
-								$u_phone = $query_urow[ 'phone' ];
-							}
-						$query_einfo = "SELECT * FROM `equipment` WHERE `id` = '".$e_id."'";
-							if($query_erun =  mysql_query($query_einfo)){
-								$query_erow = mysql_fetch_assoc($query_erun);
-								$e_name = $query_erow[ 'name' ];
-							}
-						$query_tinfo = "SELECT * FROM `trade` WHERE `sequence` = '$trade_sequence'";
-							if($query_trun =  mysql_query($query_tinfo)){
-								$query_trow = mysql_fetch_assoc($query_trun);
-								$deadline_time = $query_trow[ 'deadline_time' ];
-								$delaytimes = $query_trow[ 'delaytimes' ];
-							}
-						if(@$info_ass3){
-							@$xmlfunction = "alert('已通知三次!')";
-						}elseif(@$info_ass2) {
-							@$xmlfunction = '"xml(\''.$i.'\',\''.$e_id.'\',\''.$u_id .'\',\''.$borrow_time.'\',\''.$delaytimes.'\',\'3\',\''.$trade_sequence.'\')"';
-						}elseif(@$info_ass){
-							@$xmlfunction = '"xml(\''.$i.'\',\''.$e_id.'\',\''.$u_id .'\',\''.$borrow_time.'\',\''.$delaytimes.'\',\'2\',\''.$trade_sequence.'\')"';
-						}else{
-							@$xmlfunction = '"xml(\''.$i.'\',\''.$e_id.'\',\''.$u_id .'\',\''.$borrow_time.'\',\''.$delaytimes.'\',\'1\',\''.$trade_sequence.'\')"';
-						}	
+function loaded() {
+	myScroll = new iScroll('wrapper', {
+		mouseWheel: true,
+		scrollbars: true,
+		snap: true,
+		momentum: false,
+		hScrollbar: false,
+		freeScroll: true,
+		onScrollEnd: function () {
+			this.pagesX.length = <?php echo $result_count;?>;
+			$('#current_page').text(this.currPageX+1+'/'+<?php echo $result_count;?>);
+		}
+	 });
+	console.dir(myScroll.options);
+}
 
-						echo '<li id="list_'.$i.'">';
-						echo '<form name="fb_form" method="POST">';
-						echo '<input type="checkbox" onclick="gray('.$i.');">';
-						echo '<input id="font_color_'.$i.'" type="hidden" value="gray"><br>';
-						echo '<hr>';
-						echo '借用物品編號:'.$e_id.'<br>';
-						echo '借用物品名稱:'.$e_name.'<br>';
-						echo '借用時間:'.$borrow_time.'<br>';
-						echo '歸還期限:'.$deadline_time.'<br>';
-						echo '續借次數:'.$delaytimes.'<br>';
-						echo '<hr>';
-						echo '借用人資訊<hr>';
-						echo '學號:'.$u_id .'<br>';
-						echo '姓名:'.$u_name .'<br>';
-						echo '聯絡方式:<br><<font color="blue">EMAIL</font>>'.$u_email.'<br><<font color="blue">PHONE</font>>'.$u_phone.'<br>';
-						echo '<hr>';
-						echo '<label class="submit_'.$i.'" style="display:none;">通知助理:</label>'.'<input id="list_'.$i.'_a" class="submit_'.$i.'" type="text" style="display:none;">'.'<label class="submit_'.$i.'" style="display:none;"><br></label>';
-						echo '<label class="submit_'.$i.'" style="display:none;">借用人預計歸還時間:</label>'.'<input id="list_'.$i.'_u" class="submit_'.$i.' datepick" type="text" style="display:none;">'.'<label class="submit_'.$i.'" style="display:none;"><br></label>';
-						echo '<label class="submit_'.$i.'" style="display:none;">其他事項:</label>'.'<input id="list_'.$i.'_t" class="submit_'.$i.'" type="text" style="display:none;">'.'<label class="submit_'.$i.'" style="display:none;"><br></label>';
-						echo '<div id="button_'.$i.'"><input class="submit_'.$i.'" type="button" value="提交" onclick='.@$xmlfunction.' style="display:none;"></div>';
-						echo '<div id="inform'.$i.'_a" style="display:inline-block;margin:10px;">'.@$info_time.'<br>通知助理:'.@$info_ass.'<br>預計歸還時間:<br>'.@$u_turn_time.'<br>備註:'.@$info_detail.'</div>';
-						echo '<div id="inform'.$i.'_b" style="display:inline-block;margin:10px;">'.@$info_time2.'<br>通知助理:'.@$info_ass2.'<br>預計歸還時間:<br>'.@$u_turn_time2.'<br>備註:'.@$info_detail2.'</div>';
-						echo '<div id="inform'.$i.'_c" style="display:inline-block;margin:10px;">'.@$info_time3.'<br>通知助理:'.@$info_ass3.'<br>預計歸還時間:<br>'.@$u_turn_time3.'<br>備註:'.@$info_detail3.'</div>';
-						echo '</form></li><hr>';
-						$i++;
-						$result_count++;							
-					} 
-				}	
-				echo '</ul>';
-			?>
-		</div>
-
-			<?php
-				function get_current_date(){ //+8 is used to adjust server's time  to the correct time
-					$datetime = date ("Y-m-d H:i:s" , mktime(date('H')+6, date('i'), date('s'), date('m'), date('d'), date('Y'))) ; 
-					return $datetime;
-				}	
-				function sync_correct(){
-					$init = "SELECT * FROM `trade_analyze`";
-					if($init_run =  mysql_query($init)){
-						while ($init_row = mysql_fetch_assoc($init_run)) {
-							$trade_sequence = $init_row['t_sequence'];
-							$query_rpt_count = mysql_query("SELECT COUNT(1) FROM `index_faceboking` WHERE `trade_sequence` = '$trade_sequence'");
-							if(mysql_result($query_rpt_count, 0)>0){
-								mysql_query("UPDATE `test`.`index_faceboking` SET `info_progress` = 'done' WHERE `trade_sequence`='$trade_sequence' LIMIT 1");
-							}
-						}
-					}
-						
-					$init = "SELECT * FROM `trade` where `t_status`='return'";
-					if($init_run =  mysql_query($init)){
-						while ($init_row = mysql_fetch_assoc($init_run)) {
-							$trade_sequence = $init_row['sequence'];
-							$query_rpt_count = mysql_query("SELECT COUNT(1) FROM `index_faceboking` WHERE `trade_sequence` = '$trade_sequence'");
-							if(mysql_result($query_rpt_count, 0)>0){
-								mysql_query("UPDATE `test`.`index_faceboking` SET `info_progress` = 'done' WHERE `trade_sequence`='$trade_sequence' LIMIT 1");
-							}
-						}
-					}
-				}
-				function id_correct($id_search){ //unify the ID format and ID debug
-					if(preg_match('/^(1)\d{8}$/',$id_search)){
-					    $id_search = $id_search;
-					}
-					elseif(preg_match('/^(00)\d{7}$/',$id_search)){
-						$id_search = $id_search = $id_search;;
-					}
-					elseif (preg_match('/^(1)\d{9}$/',$id_search)){
-						$id_search = substr($id_search,0,9);
-					}
-					elseif (preg_match('/^(9)\d{7}$/',$id_search)){
-						$id_search = '0'.$id_search;
-					}
-					elseif (preg_match('/^(9)\d{8}$/',$id_search)){
-						$id_search = substr('0'.$id_search,0,9);
-					}
-					elseif(($id_search == '1152542')|| ($id_search == '01152542')){
-					   $id_search = '1152542';
-					}
-					else{
-						echo "<SCRIPT Language=javascript>";
-			    		echo "window.alert('".$id_search."不符合標準化篩選規則!(error-0xe01a000f)')";
-			    		echo "</SCRIPT>";
-						
-				    	exit;
-					}
-					return $id_search;
-				}
-			?>
-
-		<div id="changeside">
-			<!-- form to submit ID to id_judge.php-->
-			<span id="span_noti"><?php echo $result_count;?></span>
-			<form id="form" name="id_form" action="id_judge.php" method="POST" target="tonyy" style="margin-bottom: 0px;" autocomplete="off">
-			<img id="laser" src="img/laser.png"/>
-				<input id="id_search" style="ime-mode: disabled" type="text" name="id_search" placeholder="Scan ID" value="100306082"><br>
-				<div class="submit"><input type="submit" value="" onclick="CKAddGust2('id_search','errors','id_search');" id="submit"><span class="ping1"></span><span class="ping2"></span><span class="ping3"></span></div>
-			</form>
-			<input id="snowman" type="button" placeholder="" onClick="window.location='main_console/index.php'">
-			<!-- show the ID debug info -->
-			<div id="errors"></div>
-			<div>
-			  <div id="bar"></div><!-- xprogress  -->
-			</div>
-			
-		</div>
-		
-
+document.addEventListener('DOMContentLoaded', loaded, false);
+</script>
 <script type="text/javascript">
 $(document).ready(function(){ 
-	$("#id_search").keyup(function(){<!-- 字元數進度條模組 -->
+	$('#current_page').text('1/'+<?php echo $result_count;?>);
+	$("#id_search").keyup(function(){ //字元數進度條模組
 	var box=$(this).val();
 	var main = box.length *100;
 	var value= (main / 9);
@@ -318,60 +489,8 @@ $(document).ready(function(){
 	});
 });
 </script>
-		
-		
-		
-		<iframe name="tonyy" style="display:none"></iframe>
-
-	
-		<img src="img/gemini22.png"  style="display:block; margin:auto; clear:both;"  height="125" width="140" >
-	
-	</body>
-</html>
 <script type="text/javascript">
 
-function CKAddGust2(the_value_id,div_id,the_input_id){		
-	var valuee = document.getElementById(the_value_id).value;
-	var div = document.getElementById(div_id);
-	if(valuee == ""){
-		document.getElementById(the_input_id).focus();
-		div.textContent = "請填寫[查詢id]欄位!";
-		div.style.color = "red";
-		event.returnValue = false;
-	}
-	else if((valuee == '1152542')|| (valuee == '01152542')){
-		valuee = '1152542';
-		event.returnValue = true;
-	}
-	else if(((document.id_form.id_search.value.length>10)||(document.getElementById(the_input_id).value.length<8))&&
-		(isNaN(document.id_form.id_search.value)==true)){
-		div.textContent = "請輸入1或9開頭的9-10位數字!";
-		div.style.color = "red";
-		event.returnValue = false;
-		document.getElementById(the_input_id).value = "";
-	}
-	else if((document.id_form.id_search.value.length>10)||(document.getElementById(the_input_id).value.length<8)){
-		document.getElementById(the_input_id).focus();
-		div.textContent = "請輸入9-10位字元!";
-		div.style.color = "red";
-		event.returnValue = false;
-		document.getElementById(the_input_id).value = "";
-	}
-	else if(isNaN(document.id_form.id_search.value)==true){
-		document.getElementById(the_input_id).focus();
-		div.textContent = "請輸入數字!";
-		div.style.color = "red";
-		event.returnValue = false;
-		document.getElementById(the_input_id).value = "";
-	}
-
-	else{
-		event.returnValue = true;	
-	}
-	
-}
-</script>
-<script type="text/javascript">
 	$(function() {
         $( ".datepick" ).datetimepicker({
         	formatDate:'Y-m-d',
@@ -456,4 +575,17 @@ function CKAddGust2(the_value_id,div_id,the_input_id){
 
 	}
 </script>
+<script>
+$(document).ready(function(){ 
+	element = $('li');
+	var oldFunc = element.onmousedown;
+	element.onmousedown = function (evt) {
+    	if(this.focus()){
+    		console.log('focus');
+    	}
+	}
+});
+</script>
+</body>
+</html>
 <!-- Index design by Guang -->

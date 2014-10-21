@@ -1,4 +1,13 @@
 <html>
+<style>
+img{
+	opacity: 0.5;
+}
+img:hover{
+	opacity:1.0;
+	cursor:pointer;
+}
+</style>
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 <body>
 <?php
@@ -116,7 +125,7 @@
 			<input type="submit" value="確定"></input>
 		</form>
 	</div>
-	<div>
+	
 	<span><strong><子類別管理></strong></span><br>
 		<table>
 		
@@ -174,7 +183,28 @@
 				<input type="submit" value="確定刪除" name="remove_subclass" disabled>
 			</div>
 		</form>
-	</div>	
+	</div>
+
+	<div>
+	<span><strong><物品預設包設定></strong></span><br>
+		<form action="ajax_folder/default_package_insert.php" method="POST" style="width:800px;">
+			<label>物品:  </label>
+			<select id="default_package_select">
+			<option disabled selected>請選擇物品</option>
+			<?php
+				$sql_1 = "SELECT `equipment`.`id` FROM `equipment` INNER JOIN `setting` ON (`equipment`.`class` = `setting`.`e_class` AND `setting`.`subcategory` IS NOT NULL AND `equipment`.`parent` IS NULL ) GROUP BY `equipment`.id";
+				$sql_run = mysql_query($sql_1);
+                while($sql_row = mysql_fetch_assoc($sql_run)){
+                	$total_Eid_option = $total_Eid_option.'<option value="'.$sql_row["id"].'">'.$sql_row["id"].'</option>';
+                }
+				echo $total_Eid_option;
+			?>
+			</select>
+			<div id="equipment_default_menu"></div>
+			<input type="submit" value="確定" disabled></input>
+		</form>
+	</div>
+	<div>
 </div>
 </body>
 </html>
@@ -378,5 +408,25 @@
 			}
 		}
 		$('select[name=child_class_n]').html(childhtml);
+	});
+</script>
+<script type="text/javascript">
+	$('#default_package_select').change(function(){
+		$(this).parent().children("input[type=submit]").removeAttr('disabled');
+		var data = {
+	    	"e_id": $(this).val()
+	    };
+		$.ajax({
+		    type: "POST",
+		    dataType: "json",
+		    url: "ajax_folder/get_default_equipment.php", //Relative or absolute path to response.php file
+		    data: data,
+		    beforeSend: function(){
+		    	$('#equipment_default_menu').html('<img src="ajaxloader.gif"/>');
+		    },
+		    success: function(data){
+		    	$('#equipment_default_menu').html(data);
+		   	}
+	    });
 	});
 </script>

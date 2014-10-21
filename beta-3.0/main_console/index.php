@@ -63,11 +63,21 @@ div.tab_container .tab_content {
 div.tab_container .tab_content h2 {
   margin: 0 0 20px; 
 }
+#backtosys:hover{
+  background-color: pink;
+  opacity: 1.0;
+}
+#backtosys{
+  background-color: pink;
+  opacity: 0.7;
+}
+
   </style>
 </head>
 <body>
   <div class="abgne_tab">
     <ul class="tabs">
+      <!-- <li><a href="../index.php">回借用系統</a></li> -->
       <li><a href="#tab5">規則設定</a></li>
       <li><a href="#tab1">人</a></li>
       <li><a href="#tab2">物品</a></li>
@@ -75,6 +85,7 @@ div.tab_container .tab_content h2 {
       <li><a href="#tab4">歷史紀錄(已歸還)</a></li>
       <li><a href="#tab6">數據分析</a></li>
       <li><a href="#tab7">迷你記錄表</a></li>
+      <li><a id="backtosys" href="../index.php">回借用系統</a></li>
     </ul>
  
     <div class="tab_container">
