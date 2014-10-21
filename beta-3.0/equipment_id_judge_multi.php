@@ -223,36 +223,67 @@
                         .$bck_chs.'" value="continue_borrow" disabled><font color="gray">續借</font><input type="radio" name="'
                         .$bck_chs.'" value="just_return" checked><font color="gray">歸還(此類別不得續借)</font>  ';
                     }
-                    //set a global variable including equipment information, input fill and buttons 
-                    @$_SESSION[$divv] = '<div id="'.$divv.'">'.$informationn.'<br>this is   '.$_SESSION['times']
-                        .' times (over 5 times should reload!)<input type="hidden" name="'.$divv.'" value="'.$divv.'"><input type="hidden" name="'
-                        .$inputt.'" value="'.$informationn.'"><input type="hidden" class="borrowed" value="'.$_SESSION['e_id'].'"><input type="hidden" id="equ_val'
-                        .$_SESSION['e_id'].'" name="'.$equ_id.'" value="'.$_SESSION['e_id'].'"><input type="hidden" name="'
-                        .$usr_id.'" value="'.$_SESSION['id'].'"><br>'.$kind_equ_b.'<input type="hidden" name="'
-                        .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
-                        .$equ_cls.'" value="'.$_SESSION['e_class'].'"><input type="hidden" id="'
-                        .$bck_chs.'" value="'.$_SESSION['e_id'].'"><input type="button" value="移除" onClick="removed('.$_SESSION['times'].');"<br><br><hr></div>';
-                    //detect error div if there's any blank
-                    echo '<div id="textDiv"></div>';
-                    //establish the form include equipment information
-                    echo '<form id="childform" action="./equipment_lend_return_multi.php" method="post" onsubmit="return ray.ajax('.$_SESSION['times'].')">';
-                    //output all the div which have been inputted
-                    for($x=0;$x<$_SESSION['times'];$x++){
-                        $hi=$x+1;
-                        echo @$_SESSION['divv'.$hi];
+
+                    $sql = "SELECT `parent` FROM `trade` WHERE `e_id` = '".$_SESSION['e_id']."' LIMIT 1";
+                    $sql_run =  mysql_query($sql);
+                    while($sql_row = mysql_fetch_assoc($sql_run)){
+                        $e_parent = $sql_row["parent"];
                     }
-                    //if there's still divs left, show the information below(assistent ID, submit button)
-                    if($_SESSION['times']-@$_SESSION['counts']>0){
-                        echo '<div id="adot">';
-                        echo '<br>';
-                        echo '<input type="text" placeholder="經辦助理ID" style="ime-mode: disabled;float:left" id="assname" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
-                        echo '<input type="hidden" id = "assname1" name="tra_handler" style="float:left">';
-                        echo '<div id="handler_name" style="float:left;padding-left: 5px;"></div>';
-                        echo '<br><br>';
-                        echo "<input id=\"submit1\" type=\"submit\" value=\" \" onClick=\"CKAddGust3(".$_SESSION['times'].")\">";
-                        echo '</div>';
+                    if($e_parent==NULL){
+                        $sql_get_ids = "SELECT `e_id` FROM `trade` WHERE `parent`= '".$_SESSION['e_id']."'";
+                        $sql_run = mysql_query($sql_get_ids);
+                        $sub_items = '';
+                        while($sql_getIDs_row = mysql_fetch_assoc($sql_run)) {
+                            $sql_get_equs = "SELECT * FROM `equipment` WHERE `id` = '".$sql_getIDs_row['e_id']."' LIMIT 1";
+                            $sql_run2 = mysql_query($sql_get_equs);
+                            while($sql_getEqus_row = mysql_fetch_assoc($sql_run2)) {
+                                $_SESSION['times'] = $_SESSION['times']+1;
+                                $sub_items .= '<label style="color:blue;border-bottom-style:solid;border-color:#444444;">'.$sql_getEqus_row['name'].'</label><br>';
+                                $sub_items .= '<input type="hidden" name="equ_id'.$_SESSION['times'].'" value="'.$sql_getEqus_row['id'].'">';
+                                $sub_items .= '<input type="hidden" name="usr_id'.$_SESSION['times'].'" value="'.$_SESSION['id'].'">';
+                                $sub_items .= '<input type="hidden" name="equ_stats'.$_SESSION['times'].'" value="borrowed">';
+                                $sub_items .= '<input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$sql_getEqus_row['class'].'">';
+                                $sub_items .= '<input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$sql_getEqus_row['name'].'<br>物品類別 : '.$sql_getEqus_row['class'].'">';
+                                $sub_items .= '<input type="hidden" name="equ_add_clas'.$_SESSION['times'].'">';
+                                $sub_items .= '<input type="hidden" name="bck_chs'.$_SESSION['times'].'" value="just_return">';
+                            }
+                        }   
+
+                        //set a global variable including equipment information, input fill and buttons 
+                        @$_SESSION[$divv] .= '<div id="'.$divv.'">'.$informationn.'<input type="hidden" name="'.$divv.'" value="'.$divv.'"><input type="hidden" name="'
+                            .$inputt.'" value="'.$informationn.'"><input type="hidden" class="borrowed" value="'.$_SESSION['e_id'].'"><input type="hidden" id="equ_val'
+                            .$_SESSION['e_id'].'" name="'.$equ_id.'" value="'.$_SESSION['e_id'].'"><input type="hidden" name="'
+                            .$usr_id.'" value="'.$_SESSION['id'].'"><br>'.$sub_items.$kind_equ_b.'<input type="hidden" name="'
+                            .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
+                            .$equ_cls.'" value="'.$_SESSION['e_class'].'"><input type="hidden" id="'
+                            .$bck_chs.'" value="'.$_SESSION['e_id'].'"><input type="button" value="移除" onClick="removed('.$_SESSION['times'].');"<br><br><hr></div>';
+                        //detect error div if there's any blank
+                        echo '<div id="textDiv"></div>';
+                        //establish the form include equipment information
+                        echo '<form id="childform" action="./equipment_lend_return_multi.php" method="post" onsubmit="return ray.ajax('.$_SESSION['times'].')">';
+                        //output all the div which have been inputted
+                        for($x=0;$x<$_SESSION['times'];$x++){
+                            $hi=$x+1;
+                            echo @$_SESSION['divv'.$hi];
+                        }
+                        //if there's still divs left, show the information below(assistent ID, submit button)
+                        if($_SESSION['times']-@$_SESSION['counts']>0){
+                            echo '<div id="adot">';
+                            echo '<br>';
+                            echo '<input type="text" placeholder="經辦助理ID" style="ime-mode: disabled;float:left" id="assname" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
+                            echo '<input type="hidden" id = "assname1" name="tra_handler" style="float:left">';
+                            echo '<div id="handler_name" style="float:left;padding-left: 5px;"></div>';
+                            echo '<br><br>';
+                            echo "<input id=\"submit1\" type=\"submit\" value=\" \" onClick=\"CKAddGust3(".$_SESSION['times'].")\">";
+                            echo '</div>';
+                        }
+                        echo '</form>';
+                    }else{
+                        echo "<SCRIPT>";
+                        echo "window.alert('請歸還整個Package!');";
+                        echo "window.parent.window.location.href = './main_menu.php';";
+                        echo "</SCRIPT>";    
                     }
-                    echo '</form>';
                 }
                 //if the equipment is borrowed, and the user ID is different from login user ID, shoe the alert window
                 elseif ($_SESSION['e_owner']!=@$_SESSION['id']) {
