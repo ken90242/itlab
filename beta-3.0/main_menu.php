@@ -402,6 +402,26 @@ function send_object(value,equ_id,valuee){
 		}
 		if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			if(xmlhttp.responseText=='ERRor!'){
+				if(document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid")){
+					var label_subid_arr = document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid");
+					for(var i=0;i<label_subid_arr.length;i++){
+						console.log("label_subid_arr[i].innerText:["+i+"]"+label_subid_arr[i].innerText);
+						console.log("the_value(input):"+equ_id);
+						console.log("---------------------------");
+						if(label_subid_arr[i].innerText.split("[")[0]==equ_id) {
+							alert('子類別已輸入過此euqipment_id'); //可以改成其他方式呈現錯誤
+							var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
+							for(var i=0;i<arr.length;i++){
+								arr[i].src = "img/question.png";
+							}
+							for(var i=arr.length-1;i>=0;i--){
+								arr[i].className = "blink";
+							}
+							event.returnValue = false;
+							return;
+						}
+					}
+				}
 				nochongfu(valuee,equ_id);
 				// var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
 				// for(var i=0;i<arr.length;i++){

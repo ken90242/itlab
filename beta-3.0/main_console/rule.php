@@ -194,6 +194,7 @@ img:hover{
 			<?php
 				$sql_1 = "SELECT `equipment`.`id` FROM `equipment` INNER JOIN `setting` ON (`equipment`.`class` = `setting`.`e_class` AND `setting`.`subcategory` IS NOT NULL AND `equipment`.`parent` IS NULL ) GROUP BY `equipment`.id";
 				$sql_run = mysql_query($sql_1);
+				$total_Eid_option="";
                 while($sql_row = mysql_fetch_assoc($sql_run)){
                 	$total_Eid_option = $total_Eid_option.'<option value="'.$sql_row["id"].'">'.$sql_row["id"].'</option>';
                 }

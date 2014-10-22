@@ -1,44 +1,34 @@
 <?php
 require './connect_database.php';
-// a query which needs user's ID 
-$query = "SELECT `id` FROM user ORDER BY  `user`.`id` ASC";
-$query_run = mysql_query($query);
-while($row = mysql_fetch_array($query_run)){
-  $b[] = array_shift($row); 
-}
-
-//get user's ID from equipment_id_judge_multi.php
-$q=$_GET["q"];
-$q = id_correct($q);
-
+header("Content-Type:text/html; charset=utf-8");
 //look up and grab user name by user ID from user table if length of q>0
-if (strlen($q) > 0){
-  $hint="";
-  for($i=0; $i<count($b); $i++){
-    if ($q==$b[$i]) {
-      $query = "SELECT `name` FROM user WHERE `user`.`id`='".$b[$i]."' ORDER BY  `user`.`id` ASC";
-      $query_run = mysql_query($query);
-      $query_row = mysql_fetch_assoc($query_run);
-      if ($hint==""){
-        $hint=  $query_row[ 'name' ] ;
-      }
-      else{
-        $hint=$hint." , ".$query_row[ 'name' ];
+if(isset($_GET["q"])){
+  $query = "SELECT `id` FROM `user` ORDER BY `user`.`id` ASC";
+  $query_run = mysql_query($query);
+  while($row = mysql_fetch_assoc($query_run)){
+    $b[] = $row["id"]; 
+  }
+
+
+  $q=$_GET["q"];
+  $q=id_correct($q);
+  if (strlen($q) > 0){
+    $hint="找不到使用者[".$q."]";
+    for($i=0; $i<count($b); $i++){
+      if($q==$b[$i]) {
+        $query_1 = "SELECT `name` FROM `user` WHERE `user`.`id`='".$b[$i]."' ORDER BY  `user`.`id` ASC LIMIT 1";
+        $query_run_1 = mysql_query($query_1);
+        $query_row_1 = mysql_fetch_assoc($query_run_1);
+
+        if(isset($query_row_1[ 'name' ])){
+          $hint=$query_row_1[ 'name' ] ;
+        }
       }
     }
   }
+  //output the response
+  echo $hint;
 }
-
-//check the whether the hint exists(whether user ID exists in user table)
-if ($hint == ""){
-  $response="No such person!";
-}
-else{
-  $response=$hint;
-}
-
-//output the response
-echo $response;
 
 function id_correct($id_search){ //unify the ID format and ID debug
     if(preg_match('/^(1)\d{8}$/',$id_search)){
@@ -61,15 +51,6 @@ function id_correct($id_search){ //unify the ID format and ID debug
     }
     elseif(($id_search == '1152542')|| ($id_search == '01152542')){
        $id_search = '1152542';
-    }
-    else{
-      echo "<SCRIPT Language=javascript>";
-        echo "window.alert('NOT formal informat!(9xxxxxxx(x)/1xxxxxxxx(x))')";
-        echo "</SCRIPT>";
-        echo "<script language=\"javascript\">";
-        echo "window.parent.window.location.href = \"./index.php\"";
-        echo "</script>"; 
-        exit;
     }
     return $id_search;
   }

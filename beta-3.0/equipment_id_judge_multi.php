@@ -115,7 +115,7 @@
                         //grab accessories from "setting" by current equipment class(type)
                         if($query_run =  mysql_query($sql)){
                             while($query_row = mysql_fetch_assoc($query_run)){
-                                if($query_row[ 'accessories' ]!=NUll){
+                                if($query_row['accessories']!=NUll){
                                     $accessories_arr = explode(";", $query_row[ 'accessories' ]);
                                     $_SESSION['$accessories']="";
                                     foreach ($accessories_arr as $value) {   
@@ -127,23 +127,38 @@
                                     }
                                 }
                                 
-                                if($query_row[ 'enable_overday' ]==1){
+                                if($query_row['enable_overday']==1){
                                     $input_enable_overday = '<input name="'.$over_check_day.'" type="checkbox" value="ok"><label style="color:#a14792">隔天借用</label>';
                                 }
-                                if($query_row[ 'subcategory' ]!=NULL){
-                                    $subcategory_arr = explode(";", $query_row[ 'subcategory' ]);
-                                    $_SESSION['$subcategory']="";
-                                    // for ($subcategory_arr as $value){
-                                    for ($i=0;$i< sizeof($subcategory_arr)-1;$i++) {   
-                                        if($_SESSION['$subcategory']!=""){
-                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
-                                        }else{
-                                            $_SESSION['$subcategory'] = "<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
-                                        }
-                                    }
-                                    $_SESSION['$subcategory'] = '<input class="i_subcategory" type="hidden" value="'.$query_row[ 'subcategory' ].'">'.$_SESSION['$subcategory'];
-                                }
 
+                                if($query_row['subcategory']!=NULL){
+                                    $subcategory_arr = explode(";", $query_row['subcategory']);
+                                    $_SESSION['$subcategory']="";
+                                    $subcategory_collect = $query_row['subcategory'];
+                                    for($i=0;$i< sizeof($subcategory_arr)-1;$i++){
+
+                                        $sql_subitem = "SELECT * FROM `equipment` WHERE `class`='".$subcategory_arr[$i]."' AND `parent`='".$_SESSION['e_id']."' LIMIT 1";
+                                        $subitem_run =  mysql_query($sql_subitem);
+                                        $subitem_row = mysql_fetch_assoc($subitem_run);
+
+                                        // $_SESSION['$subcategory'] = $_SESSION['$subcategory'].$subitem_row["id"];
+                                        if(isset($subitem_row['id'])){
+                                            $_SESSION['times'] = $_SESSION['times']+1;
+                                            $subcategory_collect = str_replace($subcategory_arr[$i].";", "",$subcategory_collect);                                            
+                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory'].'<div><input type="hidden" name="equ_id'.$_SESSION['times'].'" value="'.$subitem_row['id'].'"><input type="hidden" name="usr_id'.$_SESSION['times'].'" value="'.$_SESSION['id'].'"><input type="hidden" name="equ_stats'.$_SESSION['times'].'" value="return"><input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$subitem_row['class'].'"><input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$subitem_row['name'].'<br>物品類別 : '.$subitem_row['class'].'"><input type="hidden" class="equ_add_clas" name="equ_add_clas'.$_SESSION['times'].'"><input type="hidden" class="sub_parent" name="sub_parent'.$_SESSION['times'].'" value="'.$_SESSION['e_id'].'"></div>';
+                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:blue;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">".$subitem_row['id']."[".$subitem_row['name']."]</label><img class=\"ok\" style=\"height:23px;vertical-align:middle\" src=\"img/ok.png\" name=\"img_".$subcategory_arr[$i]."\"><input type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
+                                        }else{
+                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
+                                        }
+                                        
+                                        // if($_SESSION['$subcategory']!=""){
+                                        //     $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
+                                        // }else{
+                                        //     $_SESSION['$subcategory'] = "<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
+                                        // }
+                                    }
+                                    $_SESSION['$subcategory'] = '<input class="i_subcategory" type="hidden" value="'.$subcategory_collect.'">'.$_SESSION['$subcategory'];
+                                }
                             }
                         }else{
                             echo mysql_error();
@@ -247,7 +262,7 @@
                                 $sub_items .= '<input type="hidden" name="equ_add_clas'.$_SESSION['times'].'">';
                                 $sub_items .= '<input type="hidden" name="bck_chs'.$_SESSION['times'].'" value="just_return">';
                             }
-                        }   
+                        }
 
                         //set a global variable including equipment information, input fill and buttons 
                         @$_SESSION[$divv] .= '<div id="'.$divv.'">'.$informationn.'<input type="hidden" name="'.$divv.'" value="'.$divv.'"><input type="hidden" name="'
@@ -620,6 +635,7 @@ var ray={
     }
     //when typing in assistant ID, show the assistant name
     function showHint(str){
+        console.log(str);
         var xmlhttp;
         if(str.length==0){ 
             document.getElementById("handler_name").innerHTML="";
