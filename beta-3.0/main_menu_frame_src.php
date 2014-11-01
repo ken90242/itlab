@@ -13,7 +13,6 @@
 	if(checkifanysessionexist()=='y'){ 
 		echo '<div id="adot">';
 		echo '<br>';
-		
 		echo '<input type="text" id="assname" placeholder="經辦助理ID" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
 		echo '<input type="hidden" id = "assname1" name="tra_handler" style="float:left">';
 		echo '<div id="handler_name" style="float:left;padding-left: 5px;"></div>';	
@@ -182,26 +181,45 @@ var ray={
 		}
 	}
 	function removed(tim){
-		var xmlhttp;
-		document.getElementById("textDiv").innerText = "";
-		if(document.getElementById("childform").getElementsByTagName("div").length<4){
-			document.getElementById("adot").parentNode.removeChild(document.getElementById("adot"));
-		}
-		document.getElementById("divv"+tim).parentNode.removeChild(document.getElementById("divv"+tim));
-		if(window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-			xmlhttp=new XMLHttpRequest();
-		}
-		else{// code for IE6, IE5
-			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-		}
-		xmlhttp.onreadystatechange=function(){
-			if(xmlhttp.readyState==4 && xmlhttp.status==200){
-				// document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
-			}
-		}
-			xmlhttp.open("GET","remove_multi.php?q=divv"+tim,true);
-			xmlhttp.send();
-	}
+        var xmlhttp;
+        document.getElementById("textDiv").innerText = "";
+        //if there's no equipment on the list, remove adot div(assistent ID and submit button)
+
+        var test=0;
+        if(document.getElementById("divv"+tim).className.indexOf("divv") > -1){
+             var parentItemId = document.getElementById("divv"+tim).className;
+            for(var arr=document.getElementsByClassName(parentItemId).length-1;arr>=0;arr--){
+                document.getElementById(parentItemId).parentNode.removeChild(document.getElementsByClassName(parentItemId)[arr]);
+            }
+            document.getElementById(parentItemId).parentNode.removeChild(document.getElementById(parentItemId));
+            var remove_item = parentItemId;
+        }else{
+            document.getElementById('divv'+tim).parentNode.removeChild(document.getElementById('divv'+tim));
+            var remove_item = 'divv'+tim;
+        }
+
+        for(var i=0;i<document.getElementById("childform").getElementsByTagName("div").length;i++){
+            if(document.getElementById("childform").getElementsByTagName("div")[i].id.toString().indexOf("divv") > -1){
+                test=1;
+            }
+            if(test==0){
+                document.getElementById("adot").parentNode.removeChild(document.getElementById("adot"));
+            }   
+        }
+        if(window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else{// code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange=function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                console.log(xmlhttp.responseText);
+            }
+        }
+            xmlhttp.open("GET","remove_multi.php?q="+remove_item,true);
+            xmlhttp.send();
+    }
 	function CKAddGust3(total_times){
 		var div = document.getElementById("textDiv");
 		if((document.getElementById('handler_name').innerText == "No such person!")||(document.getElementById('handler_name').innerText == "")){

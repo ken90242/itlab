@@ -158,7 +158,7 @@ input[type="image"]{
                                             $_SESSION['times'] = $_SESSION['times']+1;
                                             $subcategory_collect = str_replace($subcategory_arr[$i].";", "",$subcategory_collect);                                            
                                             $_SESSION['subcategory'] =  $_SESSION['subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:blue;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">".$subitem_row['id']."[".$subitem_row['name']."]</label><img class=\"ok\" style=\"height:23px;vertical-align:middle\" src=\"img/ok.png\" name=\"img_".$subcategory_arr[$i]."\"><input class=\"cancel-enable\" type=\"image\" src=\"main_console/cancel.png\" style=\"width:25px;vertical-align:middle\" value=\"divv".$_SESSION['times']."\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;this.ownerDocument.getElementById(this.value).parentNode.removeChild(this.ownerDocument.getElementById(this.value));this.style.cursor='default';this.className='cancel-disable';\"></div>";
-                                            $_SESSION['hidden_equipment'] =  $_SESSION['hidden_equipment'].'<div id="divv'.$_SESSION['times'].'"><input type="hidden" name="equ_id'.$_SESSION['times'].'" value="'.$subitem_row['id'].'"><input type="hidden" name="usr_id'.$_SESSION['times'].'" value="'.$_SESSION['id'].'"><input type="hidden" name="equ_stats'.$_SESSION['times'].'" value="return"><input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$subitem_row['class'].'"><input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$subitem_row['name'].'<br>物品類別 : '.$subitem_row['class'].'"><input type="hidden" class="equ_add_clas" name="equ_add_clas'.$_SESSION['times'].'"><input type="hidden" class="sub_parent" name="sub_parent'.$_SESSION['times'].'" value="'.$_SESSION['e_id'].'"></div>';
+                                            $_SESSION['hidden_equipment'] =  $_SESSION['hidden_equipment'].'<div id="divv'.$_SESSION['times'].'" class="'.$divv.'"><input type="hidden" name="equ_id'.$_SESSION['times'].'" value="'.$subitem_row['id'].'"><input type="hidden" name="usr_id'.$_SESSION['times'].'" value="'.$_SESSION['id'].'"><input type="hidden" name="equ_stats'.$_SESSION['times'].'" value="return"><input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$subitem_row['class'].'"><input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$subitem_row['name'].'<br>物品類別 : '.$subitem_row['class'].'"><input type="hidden" class="equ_add_clas" name="equ_add_clas'.$_SESSION['times'].'"><input type="hidden" class="sub_parent" name="sub_parent'.$_SESSION['times'].'" value="'.$_SESSION['e_id'].'"></div>';
                                         }else{
                                             $_SESSION['subcategory'] =  $_SESSION['subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input class=\"cancel-disable\" disabled=\"disabled\" type=\"image\" src=\"main_console/cancel.png\" style=\"width:25px;vertical-align:middle\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;this.ownerDocument.getElementById(this.value).parentNode.removeChild(this.ownerDocument.getElementById(this.value));this.style.cursor='default';this.className='cancel-disable';\"></div>";
                                         }
@@ -180,7 +180,7 @@ input[type="image"]{
                         .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
                         .$equ_cls.'" value="'.$_SESSION['e_class'].'">'.$_SESSION['$accessories'].$input_enable_overday.'
                         <br>'.$_SESSION['subcategory'].'<br><label>使用課程: </label><input id="'.$fill_class.'" type="text" name="'.$equ_add_clas.'"><br><label>其他備註: </label>
-                        <input name="e_addition_note'.$_SESSION['times'].'" type="text"><br><br><hr></div>';
+                        <input name="e_addition_note'.$_SESSION['times'].'" type="text"><br><br><hr></div>'.$_SESSION['hidden_equipment'];
                     //detect error div if there's any blank
                     echo '<div id="textDiv"></div>';
                     //establish the form include equipment information
@@ -192,7 +192,6 @@ input[type="image"]{
                     }
                     //if there's still divs left, show the information below(assistent ID, submit button)
                     if($_SESSION['times']-@$_SESSION['counts']>0){
-                        echo $_SESSION['hidden_equipment'];
                         echo '<div id="adot">';
                         echo '<br>';
                         echo '<input type="text" placeholder="經辦助理ID" style="ime-mode: disabled;float:left" id="assname" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
@@ -586,10 +585,28 @@ var ray={
         var xmlhttp;
         document.getElementById("textDiv").innerText = "";
         //if there's no equipment on the list, remove adot div(assistent ID and submit button)
-        if(document.getElementById("childform").getElementsByTagName("div").length<4){
-            document.getElementById("adot").parentNode.removeChild(document.getElementById("adot"));
+
+        var test=0;
+        if(document.getElementById("divv"+tim).className.indexOf("divv") > -1){
+             var parentItemId = document.getElementById("divv"+tim).className;
+            for(var arr=document.getElementsByClassName(parentItemId).length-1;arr>=0;arr--){
+                document.getElementById(parentItemId).parentNode.removeChild(document.getElementsByClassName(parentItemId)[arr]);
+            }
+            document.getElementById(parentItemId).parentNode.removeChild(document.getElementById(parentItemId));
+            var remove_item = parentItemId;
+        }else{
+            document.getElementById('divv'+tim).parentNode.removeChild(document.getElementById('divv'+tim));
+            var remove_item = 'divv'+tim;
         }
-        document.getElementById("divv"+tim).parentNode.removeChild(document.getElementById("divv"+tim));
+
+        for(var i=0;i<document.getElementById("childform").getElementsByTagName("div").length;i++){
+            if(document.getElementById("childform").getElementsByTagName("div")[i].id.toString().indexOf("divv") > -1){
+                test=1;
+            }
+            if(test==0){
+                document.getElementById("adot").parentNode.removeChild(document.getElementById("adot"));
+            }   
+        }
         if(window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp=new XMLHttpRequest();
         }
@@ -598,10 +615,10 @@ var ray={
         }
         xmlhttp.onreadystatechange=function(){
             if(xmlhttp.readyState==4 && xmlhttp.status==200){
-                // document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+                console.log(xmlhttp.responseText);
             }
         }
-            xmlhttp.open("GET","remove_multi.php?q=divv"+tim,true);
+            xmlhttp.open("GET","remove_multi.php?q="+remove_item,true);
             xmlhttp.send();
     }
     //detect error(if useclass and assistant ID are blank)

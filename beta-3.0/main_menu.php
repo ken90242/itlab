@@ -474,7 +474,6 @@ function send_object(value,equ_id,valuee){
 				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].style.cursor="hand";
 
 
-
 				var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
 				for(var i=0;i<arr.length;i++){
 					arr[i].src = "img/question.png";
@@ -482,9 +481,9 @@ function send_object(value,equ_id,valuee){
 				for(var i=arr.length-1;i>=0;i--){
 					arr[i].className = "blink";
 				}
-				console.log(typeof(equ_arr[4]));
 				var new_object = document.createElement('div');
 				new_object.setAttribute("id", equ_arr[4]);
+				new_object.setAttribute("class", sub_c_arr[position].parentNode.id);		
 				var object = document.getElementById("frame").contentDocument.getElementById("childform").insertBefore(new_object,document.getElementById("frame").contentDocument.getElementById("adot"));
 				object.innerHTML=equ_arr[3];
 			}			
