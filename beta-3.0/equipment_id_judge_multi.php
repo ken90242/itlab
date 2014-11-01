@@ -115,6 +115,7 @@ input[type="image"]{
         $equ_cls = 'equ_cls'.$_SESSION['times'];
         $equ_add = 'equ_add'.$_SESSION['times'];
         $equ_add_clas = 'equ_add_clas'.$_SESSION['times'];
+        $e_addition_note = 'e_addition_note'.$_SESSION['times'];
         $equ_stats = 'equ_stats'.$_SESSION['times'];
         $bck_chs = 'bck_chs'.$_SESSION['times'];
         $informationn = '物品名稱 : '.$_SESSION['e_name'].'<br>物品類別 : '.$_SESSION['e_class'];
@@ -180,7 +181,7 @@ input[type="image"]{
                         .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
                         .$equ_cls.'" value="'.$_SESSION['e_class'].'">'.$_SESSION['$accessories'].$input_enable_overday.'
                         <br>'.$_SESSION['subcategory'].'<br><label>使用課程: </label><input id="'.$fill_class.'" type="text" name="'.$equ_add_clas.'"><br><label>其他備註: </label>
-                        <input name="e_addition_note'.$_SESSION['times'].'" type="text"><br><br><hr></div>'.$_SESSION['hidden_equipment'];
+                        <input name="'.$e_addition_note.'" type="text"><br><br><hr></div>'.$_SESSION['hidden_equipment'];
                     //detect error div if there's any blank
                     echo '<div id="textDiv"></div>';
                     //establish the form include equipment information
@@ -229,19 +230,19 @@ input[type="image"]{
                         if($_SESSION['delaytimes']=='0'){
                             $kind_equ_b = '<input type="radio" name="'
                             .$bck_chs.'" value="continue_borrow">續借<input type="radio" name="'
-                            .$bck_chs.'" value="just_return" checked>歸還  ';
+                            .$bck_chs.'" value="just_return" checked>歸還<input type="hidden" name="'.$bck_chs.'" value="par" disabled>';
                         }
                         elseif ($_SESSION['delaytimes']!='0') {
                             $kind_equ_b = '<input type="radio" name="'
                             .$bck_chs.'" value="continue_borrow" disabled><font color="gray">續借</font><input type="radio" name="'
-                            .$bck_chs.'" value="just_return" checked><font color="gray">歸還(已續借過一次)</font>  ';
+                            .$bck_chs.'" value="just_return" checked><font color="gray">歸還(已續借過一次)</font><input type="hidden" name="'.$bck_chs.'" value="par" disabled>';
                         }
                     }
                     //if continueborrow days is 0, show the just_return button
                     else if(@$_SESSION['continue_borrow_interval']==0){
                         $kind_equ_b = '<input type="radio" name="'
                         .$bck_chs.'" value="continue_borrow" disabled><font color="gray">續借</font><input type="radio" name="'
-                        .$bck_chs.'" value="just_return" checked><font color="gray">歸還(此類別不得續借)</font>  ';
+                        .$bck_chs.'" value="just_return" checked><font color="gray">歸還(此類別不得續借)</font><input type="hidden" name="'.$bck_chs.'" value="par" disabled>';
                     }
 
                     $sql = "SELECT `parent` FROM `trade` WHERE `e_id` = '".$_SESSION['e_id']."' LIMIT 1";
@@ -265,10 +266,13 @@ input[type="image"]{
                                 $sub_items .= '<input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$sql_getEqus_row['class'].'">';
                                 $sub_items .= '<input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$sql_getEqus_row['name'].'<br>物品類別 : '.$sql_getEqus_row['class'].'">';
                                 $sub_items .= '<input type="hidden" name="equ_add_clas'.$_SESSION['times'].'">';
-                                $sub_items .= '<input type="hidden" name="bck_chs'.$_SESSION['times'].'" value="just_return">';
+                                $sub_items .= '<input type="hidden" name="bck_chs'.$_SESSION['times'].'" value="continue_borrow" disabled>';
+                                $sub_items .= '<input type="hidden" name="bck_chs'.$_SESSION['times'].'" value="just_return" checked>';
+                                $sub_items .= '<input type="hidden" name="bck_chs'.$_SESSION['times'].'" value="sub" disabled>';
+                                $sub_items .= '<input type="hidden" id="bck_chs'.$_SESSION['times'].'" value="'.$sql_getIDs_row['e_id'].'">';
                             }
                         }
-
+                        $prent_times = str_replace('divv','', $divv);
                         //set a global variable including equipment information, input fill and buttons 
                         @$_SESSION[$divv] .= '<div id="'.$divv.'">'.$informationn.'<input type="hidden" name="'.$divv.'" value="'.$divv.'"><input type="hidden" name="'
                             .$inputt.'" value="'.$informationn.'"><input type="hidden" class="borrowed" value="'.$_SESSION['e_id'].'"><input type="hidden" id="equ_val'
@@ -276,7 +280,7 @@ input[type="image"]{
                             .$usr_id.'" value="'.$_SESSION['id'].'"><br>'.$sub_items.'<label>其他事項:'.$_SESSION['e_addition_note'].'</label><br>'.$kind_equ_b.'<input type="hidden" name="'
                             .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
                             .$equ_cls.'" value="'.$_SESSION['e_class'].'"><input type="hidden" id="'
-                            .$bck_chs.'" value="'.$_SESSION['e_id'].'"><input type="button" value="移除" onClick="removed('.$_SESSION['times'].');"<br><br><hr></div>';
+                            .$bck_chs.'" value="'.$_SESSION['e_id'].'"><input type="button" value="移除" onClick="removed('.$prent_times.');"<br><br><hr></div>';
                         //detect error div if there's any blank
                         echo '<div id="textDiv"></div>';
                         //establish the form include equipment information
@@ -293,7 +297,6 @@ input[type="image"]{
                             echo '<input type="text" placeholder="經辦助理ID" style="ime-mode: disabled;float:left" id="assname" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
                             echo '<input type="hidden" id = "assname1" name="tra_handler" style="float:left">';
                             echo '<div id="handler_name" style="float:left;padding-left: 5px;"></div>';
-                            echo '<br><br>';
                             echo "<input id=\"submit1\" type=\"submit\" value=\" \" onClick=\"CKAddGust3(".$_SESSION['times'].")\">";
                             echo '</div>';
                         }
@@ -444,50 +447,64 @@ var ray={
                         back_str = back_str+myList[x].value+'  ';
                     }
                 }
-
                 var a = 0;
                 var b = 0;
                 var STRS = new Array();
                 var STRS2 = new Array();
+
+                var STRS3 = new Array();
+                var STRS4 = new Array();
+
                 for(var j=1;j<=total_timess;j++){
                     var word = 'bck_chs'+j;
                     var oRadio = document.getElementsByName(word);
+
                     if((oRadio[0]||oRadio[1])&&(!oRadio[2])){
                         if(oRadio[0].checked){
                             a = document.getElementById(word).value;
                             STRS.push(a);
+                            if(oRadio[2].value!="sub"){
+                                STRS3.push(a);
+                            }
                         }else if(oRadio[1].checked){
                             b = document.getElementById(word).value;
                             STRS2.push(b);
+                            if(oRadio[2].value!="sub"){
+                                STRS4.push(b);
+                            }
                         }
                     }else if((oRadio[0]||oRadio[1])||(oRadio[2])){
                         if(oRadio[2].checked){
                             a = document.getElementById(word).value;
                             STRS.push(a);
+                            if(oRadio[2].value!="sub"){
+                                STRS3.push(a);
+                            }
                         }else if(oRadio[1].checked){
                             b = document.getElementById(word).value;
                             STRS2.push(b);
+                            if(oRadio[2].value!="sub"){
+                                STRS4.push(b);
+                            }
                         }
                     }
                 }
                 var out_str_1 = "無";
                 var out_str_2 = "無";
-                for(var k=0;k<STRS.length;k++){
+                for(var k=0;k<STRS3.length;k++){
                     if(k==0){
-                        out_str_1 = STRS[k];
+                        out_str_1 = STRS3[k];
                     }else{
-                        out_str_1 = out_str_1+','+STRS[k];
+                        out_str_1 = out_str_1+','+STRS3[k];
                     }
                 }
-                for(var l=0;l<STRS2.length;l++){
+                for(var l=0;l<STRS4.length;l++){
                     if(l==0){
                         out_str_2 = STRS2[l];
                     }else{
-                        out_str_2 = out_str_2 +','+STRS2[l];
+                        out_str_2 = out_str_2 +','+STRS4[l];
                     }
                 }
-
-                
                 var xmlhttp1;
                 if(window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
                     xmlhttp1=new XMLHttpRequest();
@@ -503,7 +520,6 @@ var ray={
                 }
                 xmlhttp1.open("GET","calcu_margin.php?q="+back_str,true);
                 xmlhttp1.send();
-
                 var xmlhttp2;
                 if(window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
                     xmlhttp2=new XMLHttpRequest();
@@ -521,12 +537,11 @@ var ray={
                 xmlhttp2.send();
 
 
-
                 window.top.document.getElementById('out').innerText = '此次借用項目為: '+back_str;
                 window.top.document.getElementById('back_c').innerText = '此次續借項目為: '+ out_str_1;
                 window.top.document.getElementById('back').innerText = '此次歸還項目為: '+ out_str_2;
                 window.top.document.getElementById('astname').innerText = assitnat_name;
-                window.top.document.getElementById('sign_up').style.display='';
+                window.top.document.getElementById('sign_up').style.display='block';
                 window.top.document.getElementById('lightbox-shadow').style.display='';
 
                 var xmlhttp;
@@ -544,14 +559,16 @@ var ray={
                         }
                         window.top.document.getElementById('out_deadline').innerText = '此次超出歸還時間項目為: ' + fine_text_array[0] ;
                         window.top.document.getElementById('fine').innerText = '此次需繳交罰金金額為: ' + fine_text_array[1] + '元';
-                        var total_pay_rec_mon = prom_doll_in - prom_doll_out + parseInt(fine_text_array[1]);  
+                        console.log(fine_text_array[1]);
+                        console.log(typeof(fine_text_array[1]));
+                        var total_pay_rec_mon = parseInt(prom_doll_in) - parseInt(prom_doll_out) + parseInt(fine_text_array[1]);  
                         var tprm_txt = "";
                         if(total_pay_rec_mon>0){
                             tprm_txt = '借用者共需繳交: ' + total_pay_rec_mon + '元 保證金';
                         }else if(total_pay_rec_mon<0){
                             total_pay_rec_mon = 0 - total_pay_rec_mon;
                             tprm_txt = 'Itlab共須退還: ' + total_pay_rec_mon + '元 保證金';;
-                        }else{
+                        }else if(total_pay_rec_mon==0){
                             tprm_txt = '此次借還程序雙方無須繳交/退還保證金';
                         }
                         window.top.document.getElementById('final_account').innerText = tprm_txt;

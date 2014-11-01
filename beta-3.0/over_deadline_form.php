@@ -9,41 +9,33 @@ $str = '無';
 for($i=0;$i<count($fine_array);$i++){ 
 	$e_id = $fine_array[$i];
 
-	//query to grab deadline in trade table by equipment ID 
-	$query = "SELECT * FROM trade WHERE `e_id` = '".$e_id."' ORDER BY `trade`.`sequence` DESC LIMIT 1";
-	if($query_run = mysql_query($query)){
-		$query_row = mysql_fetch_assoc($query_run);
-		$deadline_time = $query_row[ 'deadline_time' ];	
-	}
-	else{
-		echo mysql_error();
-	}
-
 	//query to grab equipment class in equipment table by equipment ID
 	$quety_class = "SELECT * FROM equipment WHERE `id` = '".$e_id."' LIMIT 1"; 
 	if($quety_class_run = mysql_query($quety_class)){
 		$quety_class_row = mysql_fetch_assoc($quety_class_run);
 		$e_class = $quety_class_row[ 'class' ];	
 	}
-	else{
-		echo mysql_error();
-	}
+	if($quety_class_row[ 'parent' ] == NULL){
+		//query to grab deadline in trade table by equipment ID 
+		$query = "SELECT * FROM trade WHERE `e_id` = '".$e_id."' ORDER BY `trade`.`sequence` DESC LIMIT 1";
+		if($query_run = mysql_query($query)){
+			$query_row = mysql_fetch_assoc($query_run);
+			$deadline_time = $query_row[ 'deadline_time' ];	
+		}
 
-	//query to grab fine in setting table by equipment class
-	$query_fine = "SELECT * FROM setting WHERE `e_class` = '".$e_class."' LIMIT 1";
-	
-	if($query_fine_run = mysql_query($query_fine)){
-		$query_fine_row = mysql_fetch_assoc($query_fine_run);
-		$e_class_fine = $query_fine_row[ 'fine' ];	
-	}
-	else{
-		echo mysql_error();
-	}
-	//judge whether it's overdue or not and calculate the total fine, and add it to OrigiArray(if it's overdue)
-	$time_gap = strtotime($deadline_time) - strtotime(current_date());
-	if($time_gap<0){
-		$total_fine = $total_fine+$e_class_fine;
-		array_push($OrigiArray,$e_id);
+		//query to grab fine in setting table by equipment class
+		$query_fine = "SELECT * FROM setting WHERE `e_class` = '".$e_class."' LIMIT 1";
+		
+		if($query_fine_run = mysql_query($query_fine)){
+			$query_fine_row = mysql_fetch_assoc($query_fine_run);
+			$e_class_fine = $query_fine_row[ 'fine' ];	
+		}
+		//judge whether it's overdue or not and calculate the total fine, and add it to OrigiArray(if it's overdue)
+		$time_gap = strtotime($deadline_time) - strtotime(current_date());
+		if($time_gap<0){
+			$total_fine = $total_fine+$e_class_fine;
+			array_push($OrigiArray,$e_id);
+		}	
 	}
 }
 

@@ -72,6 +72,7 @@
 					<!-- show equipment ID which was over the return deadline and display the penalty  -->
 					<label id="out_deadline">處理中...請稍候</label><label style="color: gray;">&nbsp;&nbsp;|&nbsp;&nbsp;</label><label style="color: #d57499;" id="fine">處理中...請稍候</label><br>
 					<hr style="border-color: black;">
+					<label style="color: red;" id="final_account">處理中...請稍候</label><br>
 					<!-- show the contract and [user,assistant]'s name -->
 					<div id="txtraa" align="left">
 					1.請確認器材使用人為借用或歸還本人身份 。<br>
@@ -230,7 +231,7 @@
 												$sub_e_sql = "SELECT * FROM equipment WHERE `id`='".$value."'";
 												$sub_e_run = mysql_query($sub_e_sql);
 												$sub_e_row = mysql_fetch_assoc($sub_e_run);
-											    echo "<div><img id='img_".$sub_e_row["id"]."'' style=\"height:15px;vertical-align:middle;cursor:pointer\" src=\"img/pre_prolong.png\" onClick=\"expand_subobj('".$sub_e_row["id"]."')\"><label>".$i.".".$sub_e_row["name"]."</label></div>";
+											    echo "<div><img id='img_".$sub_e_row["id"]."'' style=\"height:15px;width:15px;vertical-align:middle;cursor:pointer\" src=\"img/pre_prolong.png\" onClick=\"expand_subobj('".$sub_e_row["id"]."')\"><label>".$i.".".$sub_e_row["name"]."</label></div>";
 											    echo '<div id="'.$sub_e_row["id"].'" style="display:none">';
 											    echo '&nbsp;&nbsp;&nbsp;&nbsp;- 子器材編號: ' , $sub_e_row["id"] , '<br>';
 												echo '&nbsp;&nbsp;&nbsp;&nbsp;- 子器材類別: ' , $sub_e_row["class"] , '<br>';

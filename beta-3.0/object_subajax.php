@@ -9,7 +9,7 @@ $e_name='empty';
 $e_class='empty';
 $u_id = $_SESSION["id"];
 $token=0;
-$query = "SELECT * FROM  `equipment` WHERE `id` = '".$e_id."' Limit 0,1";
+$query = "SELECT * FROM  `equipment` WHERE `id` = '".$e_id."' AND `status` = 'return' Limit 0,1";
 	if($query_run =  mysql_query($query)){
 		while ($query_row = mysql_fetch_assoc($query_run)) {
 			$e_class = $query_row["class"];

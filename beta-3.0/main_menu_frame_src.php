@@ -57,43 +57,60 @@ var ray={
 				var b = 0;
 				var STRS = new Array();
 				var STRS2 = new Array();
-				for(var j=1;j<=total_timess;j++){
-					var word = 'bck_chs'+j;
-					var oRadio = document.getElementsByName(word);
-					if((oRadio[0]||oRadio[1])&&(!oRadio[2])){
-						if(oRadio[0].checked){
-							a = document.getElementById(word).value;
-							STRS.push(a);
-						}else if(oRadio[1].checked){
-							b = document.getElementById(word).value;
-							STRS2.push(b);
-						}
-					}else if((oRadio[0]||oRadio[1])||(oRadio[2])){
-						if(oRadio[2].checked){
-							a = document.getElementById(word).value;
-							STRS.push(a);
-						}else if(oRadio[1].checked){
-							b = document.getElementById(word).value;
-							STRS2.push(b);
-						}
-					}
-				}
-				var out_str_1 = "無";
-				var out_str_2 = "無";
-				for(var k=0;k<STRS.length;k++){
-					if(k==0){
-						out_str_1 = STRS[k];
-					}else{
-						out_str_1 = out_str_1+','+STRS[k];
-					}
-				}
-				for(var l=0;l<STRS2.length;l++){
-					if(l==0){
-						out_str_2 = STRS2[l];
-					}else{
-						out_str_2 = out_str_2 +','+STRS2[l];
-					}
-				}
+
+				var STRS3 = new Array();
+                var STRS4 = new Array();
+
+                for(var j=1;j<=total_timess;j++){
+                    var word = 'bck_chs'+j;
+                    var oRadio = document.getElementsByName(word);
+
+                    if((oRadio[0]||oRadio[1])&&(!oRadio[2])){
+                        if(oRadio[0].checked){
+                            a = document.getElementById(word).value;
+                            STRS.push(a);
+                            if(oRadio[2].value!="sub"){
+                                STRS3.push(a);
+                            }
+                        }else if(oRadio[1].checked){
+                            b = document.getElementById(word).value;
+                            STRS2.push(b);
+                            if(oRadio[2].value!="sub"){
+                                STRS4.push(b);
+                            }
+                        }
+                    }else if((oRadio[0]||oRadio[1])||(oRadio[2])){
+                        if(oRadio[2].checked){
+                            a = document.getElementById(word).value;
+                            STRS.push(a);
+                            if(oRadio[2].value!="sub"){
+                                STRS3.push(a);
+                            }
+                        }else if(oRadio[1].checked){
+                            b = document.getElementById(word).value;
+                            STRS2.push(b);
+                            if(oRadio[2].value!="sub"){
+                                STRS4.push(b);
+                            }
+                        }
+                    }
+                }
+                var out_str_1 = "無";
+                var out_str_2 = "無";
+                for(var k=0;k<STRS3.length;k++){
+                    if(k==0){
+                        out_str_1 = STRS3[k];
+                    }else{
+                        out_str_1 = out_str_1+','+STRS3[k];
+                    }
+                }
+                for(var l=0;l<STRS4.length;l++){
+                    if(l==0){
+                        out_str_2 = STRS2[l];
+                    }else{
+                        out_str_2 = out_str_2 +','+STRS4[l];
+                    }
+                }
 
 				
 				var xmlhttp1;
@@ -146,13 +163,13 @@ var ray={
 				}
 				xmlhttp.onreadystatechange=function(){
 					if (xmlhttp.readyState==4 && xmlhttp.status==200){
-						fine_text_array = xmlhttp.responseText.split("-");
+						fine_text_array = xmlhttp.responseText.split("*");
 						if(fine_text_array[0]==''){
 							fine_text_array[0]='無';
 						}
 						window.top.document.getElementById('out_deadline').innerText = '此次超出歸還時間項目為: ' + fine_text_array[0] ;
 						window.top.document.getElementById('fine').innerText = '此次需繳交罰金金額為: ' + fine_text_array[1] + '元';
-						var total_pay_rec_mon = prom_doll_in - prom_doll_out + parseInt(fine_text_array[1]);  
+						var total_pay_rec_mon = parseInt(prom_doll_in) - parseInt(prom_doll_out) + parseInt(fine_text_array[1]);  
 						var tprm_txt = "";
 						if(total_pay_rec_mon>0){
 							tprm_txt = '借用者共需繳交: ' + total_pay_rec_mon + '元 保證金';
