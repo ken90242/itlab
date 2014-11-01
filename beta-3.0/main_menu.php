@@ -407,9 +407,6 @@ function send_object(value,equ_id,valuee){
 				if(document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid")){
 					var label_subid_arr = document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid");
 					for(var i=0;i<label_subid_arr.length;i++){
-						console.log("label_subid_arr[i].innerText:["+i+"]"+label_subid_arr[i].innerText);
-						console.log("the_value(input):"+equ_id);
-						console.log("---------------------------");
 						if(label_subid_arr[i].innerText.split("[")[0]==equ_id) {
 							alert('子類別已輸入過此euqipment_id'); //可以改成其他方式呈現錯誤
 							var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
@@ -429,9 +426,6 @@ function send_object(value,equ_id,valuee){
 				if(document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid")){
 					var label_subid_arr = document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid");
 					for(var i=0;i<label_subid_arr.length;i++){
-						console.log("label_subid_arr[i].innerText:["+i+"]"+label_subid_arr[i].innerText);
-						console.log("the_value(input):"+equ_id);
-						console.log("---------------------------");
 						if(label_subid_arr[i].innerText.split("[")[0]==equ_id) {
 							alert('子類別已輸入過此euqipment_id'); //可以改成其他方式呈現錯誤
 							var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");

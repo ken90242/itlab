@@ -559,8 +559,6 @@ var ray={
                         }
                         window.top.document.getElementById('out_deadline').innerText = '此次超出歸還時間項目為: ' + fine_text_array[0] ;
                         window.top.document.getElementById('fine').innerText = '此次需繳交罰金金額為: ' + fine_text_array[1] + '元';
-                        console.log(fine_text_array[1]);
-                        console.log(typeof(fine_text_array[1]));
                         var total_pay_rec_mon = parseInt(prom_doll_in) - parseInt(prom_doll_out) + parseInt(fine_text_array[1]);  
                         var tprm_txt = "";
                         if(total_pay_rec_mon>0){

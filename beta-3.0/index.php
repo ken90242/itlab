@@ -404,7 +404,7 @@ function loaded() {
 			$('#current_page').text(this.currPageX+1+'/'+<?php echo $result_count;?>);
 		}
 	 });
-	console.dir(myScroll.options);
+	// console.dir(myScroll.options);
 }
 
 document.addEventListener('DOMContentLoaded', loaded, false);
@@ -576,9 +576,7 @@ $(document).ready(function(){
 	element = $('li');
 	var oldFunc = element.onmousedown;
 	element.onmousedown = function (evt) {
-    	if(this.focus()){
-    		console.log('focus');
-    	}
+    	this.focus();
 	}
 	$('#notification').css( "visibility", "hidden" );
 });
