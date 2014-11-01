@@ -197,7 +197,6 @@ input[type="image"]{
                         echo '<input type="text" placeholder="經辦助理ID" style="ime-mode: disabled;float:left" id="assname" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
                         echo '<input type="hidden" id = "assname1" name="tra_handler" style="float:left">';
                         echo '<div id="handler_name" style="float:left;padding-left: 5px;"></div>';
-                        echo '<br><br>';
                         echo "<input id=\"submit0\" type=\"submit\" value=\" \" onClick=\"CKAddGust3(".$_SESSION['times'].")\">";
                         echo '</div>';
                     }
@@ -588,13 +587,21 @@ var ray={
 
         var test=0;
         if(document.getElementById("divv"+tim).className.indexOf("divv") > -1){
-             var parentItemId = document.getElementById("divv"+tim).className;
+            var parentItemId = document.getElementById("divv"+tim).className;
             for(var arr=document.getElementsByClassName(parentItemId).length-1;arr>=0;arr--){
                 document.getElementById(parentItemId).parentNode.removeChild(document.getElementsByClassName(parentItemId)[arr]);
             }
             document.getElementById(parentItemId).parentNode.removeChild(document.getElementById(parentItemId));
             var remove_item = parentItemId;
-        }else{
+        }else if(document.getElementsByClassName("divv"+tim).length>0){
+            var parentItemId = "divv"+tim;
+            for(var arr=document.getElementsByClassName(parentItemId).length-1;arr>=0;arr--){
+                document.getElementById(parentItemId).parentNode.removeChild(document.getElementsByClassName(parentItemId)[arr]);
+            }
+            document.getElementById(parentItemId).parentNode.removeChild(document.getElementById(parentItemId));
+            var remove_item = parentItemId;
+        }
+        else{
             document.getElementById('divv'+tim).parentNode.removeChild(document.getElementById('divv'+tim));
             var remove_item = 'divv'+tim;
         }
