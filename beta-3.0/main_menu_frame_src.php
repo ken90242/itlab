@@ -1,4 +1,4 @@
-        <link href="css/index2.css" rel="stylesheet" type="text/css"><!-- x -->
+        <link href="css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
 		<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
 		<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
 		

@@ -1,4 +1,4 @@
-<link href="css/index2.css" rel="stylesheet" type="text/css"><!-- x -->
+<link href="css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
 <link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
 <link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
 <style>
@@ -27,6 +27,17 @@
   -webkit-animation-duration:1.5s; 
           animation-duration:1.5s; 
 }
+input[type="image"]{
+    cursor:default;
+    opacity: 0.5;
+}
+.cancel-enable:hover{
+    cursor: hand;
+    opacity: 1.0;
+}
+.cancel-disable:hover{
+    cursor:default;
+}
 </style>
 <?php
     session_start();
@@ -47,6 +58,7 @@
             while($query_tra_row = mysql_fetch_assoc($query_tra_run)){
                 //get the continueborrow times according to the latest record grabed above
                 $_SESSION['delaytimes'] = $query_tra_row[ 'delaytimes' ] ;
+                $_SESSION['e_addition_note'] = $query_tra_row[ 'e_addition_note' ] ;
             }
         }
         else{
@@ -91,7 +103,7 @@
         }
     }
     function echoo(){
-        $_SESSION['$subcategory']=null;
+        $_SESSION['subcategory']=null;
         //establish variables which will be used later, and these variables are grabed from global variables 
         $fill_class = 'fill_class'.$_SESSION['times'];
         $over_check_day = 'over_check_day'.$_SESSION['times'];
@@ -120,7 +132,7 @@
                                     $_SESSION['$accessories']="";
                                     foreach ($accessories_arr as $value) {   
                                         if($_SESSION['$accessories']!=""){
-                                            $_SESSION['$accessories'] =  $_SESSION['$accessories']."<input type=\"checkbox\" value=\"".$value."\"><label>".$value."</label><br>";    
+                                            $_SESSION['$accessories'] =  $_SESSION['$accessories']."<input type=\"checkbox\" value=\"".$value."\"><label>".$value."</label><br>";
                                         }else{
                                              $_SESSION['$accessories'] = "<input type=\"checkbox\" value=\"".$value."\"><label>".$value."</label><br>"; 
                                         }
@@ -133,7 +145,8 @@
 
                                 if($query_row['subcategory']!=NULL){
                                     $subcategory_arr = explode(";", $query_row['subcategory']);
-                                    $_SESSION['$subcategory']="";
+                                    $_SESSION['hidden_equipment']="";
+                                    $_SESSION['subcategory']="";
                                     $subcategory_collect = $query_row['subcategory'];
                                     for($i=0;$i< sizeof($subcategory_arr)-1;$i++){
 
@@ -141,23 +154,16 @@
                                         $subitem_run =  mysql_query($sql_subitem);
                                         $subitem_row = mysql_fetch_assoc($subitem_run);
 
-                                        // $_SESSION['$subcategory'] = $_SESSION['$subcategory'].$subitem_row["id"];
                                         if(isset($subitem_row['id'])){
                                             $_SESSION['times'] = $_SESSION['times']+1;
                                             $subcategory_collect = str_replace($subcategory_arr[$i].";", "",$subcategory_collect);                                            
-                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory'].'<div><input type="hidden" name="equ_id'.$_SESSION['times'].'" value="'.$subitem_row['id'].'"><input type="hidden" name="usr_id'.$_SESSION['times'].'" value="'.$_SESSION['id'].'"><input type="hidden" name="equ_stats'.$_SESSION['times'].'" value="return"><input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$subitem_row['class'].'"><input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$subitem_row['name'].'<br>物品類別 : '.$subitem_row['class'].'"><input type="hidden" class="equ_add_clas" name="equ_add_clas'.$_SESSION['times'].'"><input type="hidden" class="sub_parent" name="sub_parent'.$_SESSION['times'].'" value="'.$_SESSION['e_id'].'"></div>';
-                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:blue;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">".$subitem_row['id']."[".$subitem_row['name']."]</label><img class=\"ok\" style=\"height:23px;vertical-align:middle\" src=\"img/ok.png\" name=\"img_".$subcategory_arr[$i]."\"><input type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
+                                            $_SESSION['subcategory'] =  $_SESSION['subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:blue;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">".$subitem_row['id']."[".$subitem_row['name']."]</label><img class=\"ok\" style=\"height:23px;vertical-align:middle\" src=\"img/ok.png\" name=\"img_".$subcategory_arr[$i]."\"><input class=\"cancel-enable\" type=\"image\" src=\"main_console/cancel.png\" style=\"width:25px;vertical-align:middle\" value=\"divv".$_SESSION['times']."\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;this.ownerDocument.getElementById(this.value).parentNode.removeChild(this.ownerDocument.getElementById(this.value));this.style.cursor='default';this.className='cancel-disable';\"></div>";
+                                            $_SESSION['hidden_equipment'] =  $_SESSION['hidden_equipment'].'<div id="divv'.$_SESSION['times'].'"><input type="hidden" name="equ_id'.$_SESSION['times'].'" value="'.$subitem_row['id'].'"><input type="hidden" name="usr_id'.$_SESSION['times'].'" value="'.$_SESSION['id'].'"><input type="hidden" name="equ_stats'.$_SESSION['times'].'" value="return"><input type="hidden" name="equ_cls'.$_SESSION['times'].'" value="'.$subitem_row['class'].'"><input type="hidden" name="inpot'.$_SESSION['times'].'" value="物品名稱 : '.$subitem_row['name'].'<br>物品類別 : '.$subitem_row['class'].'"><input type="hidden" class="equ_add_clas" name="equ_add_clas'.$_SESSION['times'].'"><input type="hidden" class="sub_parent" name="sub_parent'.$_SESSION['times'].'" value="'.$_SESSION['e_id'].'"></div>';
                                         }else{
-                                            $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
+                                            $_SESSION['subcategory'] =  $_SESSION['subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input class=\"cancel-disable\" disabled=\"disabled\" type=\"image\" src=\"main_console/cancel.png\" style=\"width:25px;vertical-align:middle\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;this.ownerDocument.getElementById(this.value).parentNode.removeChild(this.ownerDocument.getElementById(this.value));this.style.cursor='default';this.className='cancel-disable';\"></div>";
                                         }
-                                        
-                                        // if($_SESSION['$subcategory']!=""){
-                                        //     $_SESSION['$subcategory'] =  $_SESSION['$subcategory']."<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
-                                        // }else{
-                                        //     $_SESSION['$subcategory'] = "<div><label class=\"label_subid\" name=\"lbl_".$subcategory_arr[$i]."\" style=\"color:#888888;border-bottom-style: solid;border-color: #444444;\" value=\"".$subcategory_arr[$i]."\">子類別".$subcategory_arr[$i]."尚無項目</label><img class=\"blink\" style=\"height:23px;vertical-align:middle\" src=\"img/question.png\" name=\"img_".$subcategory_arr[$i]."\"><input disabled type=\"button\" value=\"clear\" onclick=\"this.parentNode.getElementsByTagName('label')[0].innerText='子類別".$subcategory_arr[$i]."尚無項目';this.parentNode.getElementsByTagName('label')[0].style.color='#888888';this.parentNode.getElementsByTagName('img')[0].src='img/question.png';this.parentNode.getElementsByTagName('img')[0].className = 'blink';this.parentNode.parentNode.getElementsByClassName('i_subcategory')[0].value+='".$subcategory_arr[$i].";';this.disabled=true;\"></div>";
-                                        // }
                                     }
-                                    $_SESSION['$subcategory'] = '<input class="i_subcategory" type="hidden" value="'.$subcategory_collect.'">'.$_SESSION['$subcategory'];
+                                    $_SESSION['subcategory'] = '<input class="i_subcategory" type="hidden" value="'.$subcategory_collect.'">'.$_SESSION['subcategory'];
                                 }
                             }
                         }else{
@@ -173,7 +179,7 @@
                         .$usr_id.'" value="'.$_SESSION['id'].'"><input type="hidden" name="'
                         .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
                         .$equ_cls.'" value="'.$_SESSION['e_class'].'">'.$_SESSION['$accessories'].$input_enable_overday.'
-                        <br>'.$_SESSION['$subcategory'].'<br><label>使用課程: </label><input id="'.$fill_class.'" type="text" name="'.$equ_add_clas.'"><br><label>其他備註: </label>
+                        <br>'.$_SESSION['subcategory'].'<br><label>使用課程: </label><input id="'.$fill_class.'" type="text" name="'.$equ_add_clas.'"><br><label>其他備註: </label>
                         <input name="e_addition_note'.$_SESSION['times'].'" type="text"><br><br><hr></div>';
                     //detect error div if there's any blank
                     echo '<div id="textDiv"></div>';
@@ -186,6 +192,7 @@
                     }
                     //if there's still divs left, show the information below(assistent ID, submit button)
                     if($_SESSION['times']-@$_SESSION['counts']>0){
+                        echo $_SESSION['hidden_equipment'];
                         echo '<div id="adot">';
                         echo '<br>';
                         echo '<input type="text" placeholder="經辦助理ID" style="ime-mode: disabled;float:left" id="assname" name="tra_handler_test" style="float:left" onkeyup="showHint(this.value)">';
@@ -268,7 +275,7 @@
                         @$_SESSION[$divv] .= '<div id="'.$divv.'">'.$informationn.'<input type="hidden" name="'.$divv.'" value="'.$divv.'"><input type="hidden" name="'
                             .$inputt.'" value="'.$informationn.'"><input type="hidden" class="borrowed" value="'.$_SESSION['e_id'].'"><input type="hidden" id="equ_val'
                             .$_SESSION['e_id'].'" name="'.$equ_id.'" value="'.$_SESSION['e_id'].'"><input type="hidden" name="'
-                            .$usr_id.'" value="'.$_SESSION['id'].'"><br>'.$sub_items.$kind_equ_b.'<input type="hidden" name="'
+                            .$usr_id.'" value="'.$_SESSION['id'].'"><br>'.$sub_items.'<label>其他事項:'.$_SESSION['e_addition_note'].'</label><br>'.$kind_equ_b.'<input type="hidden" name="'
                             .$equ_stats.'" value="'.$_SESSION['e_status'].'"><input type="hidden" name="'
                             .$equ_cls.'" value="'.$_SESSION['e_class'].'"><input type="hidden" id="'
                             .$bck_chs.'" value="'.$_SESSION['e_id'].'"><input type="button" value="移除" onClick="removed('.$_SESSION['times'].');"<br><br><hr></div>';

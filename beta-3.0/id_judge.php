@@ -4,7 +4,7 @@
 	require 'connect_database.php';
 	if ($_POST) {
         $id_search =  id_correct($_POST["id_search"]);
-		$query = "SELECT * FROM user WHERE `id`='$id_search'";
+		$query = "SELECT * FROM `user` WHERE `id`='$id_search'";
 
 		if($query_run =  mysql_query($query)){   /*Let user insert user data if id doesnt exist*/
 			if (mysql_num_rows($query_run) == NULL) {

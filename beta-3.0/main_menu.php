@@ -3,8 +3,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<meta http-equiv="refresh" content="301"; url="./main_menu.php"charset="UTF-8">
-		<link href="css/index2.css" rel="stylesheet" type="text/css"><!-- x -->
+		<meta http-equiv="refresh" content="301"; charset="UTF-8">
+
+		<link href="css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
 		<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
 		<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
 		<style type="text/css">
@@ -423,13 +424,6 @@ function send_object(value,equ_id,valuee){
 					}
 				}
 				nochongfu(valuee,equ_id);
-				// var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
-				// for(var i=0;i<arr.length;i++){
-				// 	arr[i].src = "img/question.png";
-				// }
-				// for(var i=arr.length-1;i>=0;i--){
-				// 	arr[i].className = "blink";
-				// }
 			}else{
 				if(document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid")){
 					var label_subid_arr = document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid");
@@ -466,13 +460,20 @@ function send_object(value,equ_id,valuee){
 						break;
 					}
 				}
+
+
 				sub_c_arr[position].value = sub_c_val;
 				sub_c_arr[position].parentNode.querySelectorAll('[name=lbl_'+e_class+']')[0].innerText=text;
 				sub_c_arr[position].parentNode.querySelectorAll('[name=lbl_'+e_class+']')[0].style.color="blue";
 				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].className = "ok";
 				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].src = "img/ok.png";
 				
-				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=button')[0].disabled = false;
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].className="cancel-enable";
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].setAttribute("value",equ_arr[4]);
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].removeAttribute("disabled");
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].style.cursor="hand";
+
+
 
 				var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
 				for(var i=0;i<arr.length;i++){
@@ -481,15 +482,15 @@ function send_object(value,equ_id,valuee){
 				for(var i=arr.length-1;i>=0;i--){
 					arr[i].className = "blink";
 				}
+				console.log(typeof(equ_arr[4]));
 				var new_object = document.createElement('div');
-				var object = document.getElementById("frame").contentDocument.getElementById("childform").appendChild(new_object);
+				new_object.setAttribute("id", equ_arr[4]);
+				var object = document.getElementById("frame").contentDocument.getElementById("childform").insertBefore(new_object,document.getElementById("frame").contentDocument.getElementById("adot"));
 				object.innerHTML=equ_arr[3];
-			}
-			
+			}			
 		}
 	}
 	xmlhttp.open("GET","object_subajax.php?sub_c="+value+"&e_id="+equ_id,true);
 	xmlhttp.send();
 }
 </script>
-

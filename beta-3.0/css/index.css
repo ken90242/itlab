@@ -55,6 +55,10 @@ body{
   border:#243F57 solid 1px;
   z-index:3;	
 }
+#snowman:hover{ 
+  cursor: pointer;
+  background-color:#C6C6C6;
+}
 #submit{                                
   position:absolute; 
   margin:39% 220px; 
@@ -64,9 +68,9 @@ body{
   border:#243F57 solid 1px;
   z-index:3;	
 }
-#submit:hover
-{ 
-background-color:#C6C6C6;
+#submit:hover{ 
+  cursor: pointer;
+  background-color:#C6C6C6;
 }
 #laser{  
   display:none;                             /*animation_element*/  
@@ -229,24 +233,6 @@ width: 25px;
 	z-index:3;	
 
 
-}
-
-
-
-#submit3{
-
-    width: 25px;
-    height: 25px;
-	margin-top:2%;
-	margin-left:45%;
-    border-radius: 20px;
-    border:#243F57 solid 1px; 
-	z-index:3;	
-	}
-	
-#submit3:hover
-{ 
-background-color:#C6C6C6;
 }
 
 #submit4{
