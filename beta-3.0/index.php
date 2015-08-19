@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="css/jquery.datetimepicker.css">
   	<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
   	<script src="scripts/jquery.datetimepicker.js"></script>
-	<link href="css/index.css" rel="stylesheet" type="text/css"><!-- x -->
+	<link href="css/index.css" rel="stylesheet" type="text/css">
 	<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
 	<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
 	<style type="text/css" media="all">

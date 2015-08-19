@@ -2,7 +2,7 @@
 	session_start();
 	session_destroy();	
 ?>
-<html>
+<html>vvvvv
 <head>asdsadsasdasdasfffffaaaaaaaaasavvvv
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
