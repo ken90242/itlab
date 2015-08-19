@@ -1,5 +1,5 @@
 # itlab
-Itlab project for JiangDao  - amazing experience 
+Itlab project for JiangDao
 ##Purpose
 To rebuild the item-transaction system by the following stanadard
 
