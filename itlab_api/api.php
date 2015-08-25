@@ -45,9 +45,25 @@ $app->get('/user', function () use ($app,$db){
     // echo $_GET["aa"];
 });
 
-$app->get('/user/:id', function ($id) use ($app,$db) {
-    //User Select[specific]
+$app->get('/equipment', function () use ($app,$db){
+    //User Select[all]
 
+    $equipments = array();
+    foreach ($db->equipment() as $data) {
+        $equipments[]  = array(
+            "id" => $data["id"],
+            "name" => $data["name"],
+            "class" => $data["class"],
+            "status" => $data["status"],
+            "current_owner" => $data["current_owner"],
+            "addition" => $data["addition"]
+        );
+    }
+    $app->response()->header("Content-Type", "application/json");
+    echo json_encode($equipments);
+});
+
+$app->get('/user/:id', function ($id) use ($app,$db) {
     $user = $db->user()->where("id", $id);
     if ($data = $user->fetch()) {
         echo json_encode(array(
@@ -57,11 +73,30 @@ $app->get('/user/:id', function ($id) use ($app,$db) {
             "department" => $data["department"],
             "phone" => $data["phone"],
             "blacklisted" => $data["blacklisted"]
-            ));
+        ));
     } else {
         echo json_encode(array(
             "status" => false,
             "message" => "User ID $id does not exist"
+        ));
+    }
+});
+
+$app->get('/equipment/:id', function ($id) use ($app,$db) {
+    $user = $db->equipment()->where("id", $id);
+    if ($data = $user->fetch()) {
+        echo json_encode(array(
+            "id" => $data["id"],
+            "name" => $data["name"],
+            "class" => $data["class"],
+            "status" => $data["status"],
+            "current_owner" => $data["current_owner"],
+            "addition" => $data["addition"]
+        ));
+    } else {
+        echo json_encode(array(
+            "status" => false,
+            "message" => "Equipment ID $id does not exist"
         ));
     }
 });
