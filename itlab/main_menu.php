@@ -4,49 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="refresh" content="301"; charset="UTF-8">
-
-		<link href="css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
-		<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
-		<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
-		<style type="text/css">
-		#sign_up{
-			position:fixed;
-			z-index:50;
-			border:3px solid #243F57;
-			background:#E8E8E8;
-			width:600px;
-			height:450px;
-			margin-top:-250px;
-			margin-left:-270px;
-			top:50%;
-			left:50%;
-			text-align:center;
-			font-family:"Trebuchet MS", verdana, arial,tahoma;
-			font-size:10pt;
-		}
-		#haha{
-			float:right;
-		}
-		#r1,#r2,#r3,#haha:hover{
-			cursor:pointer;
-		}
-		#usrname,#astname{
-			color:#3d74b8;
-		}
-		#lightbox-shadow {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: #000;
-			opacity: 0.75;
-			z-index: 40;
-		}
-		#txtraa{
-				  
-		}
-	</style>
+		<link href="assests/css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
+		<link href="assests/css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
+		<link href="assests/css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
 	</head>
 	<body onload="document.getElementById('equipment_search_0').focus()">
 	<?php
@@ -94,9 +54,9 @@
 				<!-- show logged in user info and button used to go back to index(if no data ,go back to index.php) -->
 					<?php
 						if($_SESSION['id']==NULL){
-							echo "<script language=\"javascript\">";
-						 	echo "window.location.href = \"./index.php\"";
-							echo "</script>"; 
+							// echo "<script language=\"javascript\">";
+						 // 	echo "window.location.href = \"./index.php\"";
+							// echo "</script>"; 
 						}
 						echo '<input type="button" value="回首頁" id="form3to1" name="B4" onClick="window.location=\'index.php\'"><br><br>';
 						echo '學號 : ' , $_SESSION['id'] , '<br>';

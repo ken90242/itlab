@@ -1,6 +1,6 @@
-        <link href="css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
-		<link href="css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
-		<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
+        <link href="assests/css/main_menu.css" rel="stylesheet" type="text/css"><!-- x -->
+		<link href="assests/css/reset.css" rel="stylesheet" type="text/css"><!-- x -->
+		<link href="assests/css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
 		
 <?php
 	session_start();

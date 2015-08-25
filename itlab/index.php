@@ -1,172 +1,22 @@
 <?php
 	session_start();
 	session_destroy();	
+	header('Content-type: text/html;charset=utf-8');
 ?>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script type="text/javascript" src="scripts/iscroll.js"></script>
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
-	<link rel="stylesheet" href="css/jquery.datetimepicker.css">
-  	<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-  	<script src="scripts/jquery.datetimepicker.js"></script>
-	<link href="css/index.css" rel="stylesheet" type="text/css">
-	<link href="css/reset.css" rel="stylesheet" type="text/css">
-	<link href="css/laser.css" rel="stylesheet" type="text/css"><!-- x -->
-	<style type="text/css" media="all">
-		#snowmanpng{
-			top:20%;
-			z-index: 90;
-		}
-		img{
-			z-index: 20;
-		}
-		img:hover{
-			opacity:1.0;
-		}
-		ul{
-			padding-right: 40px;
-		}
-		ul,li{
-			list-style: none;
-		}
-		#span_noti{
-			border-radius: 20px;
-			padding: 5px;
-			padding-left: 8px;
-			padding-right: 8px;
-			position:absolute;
-            margin-left:220px;				
-            margin-top: -120;
-			background-color: red;
-			color:white;
-			opacity: 0.5;
-			border-color: none;
-			font-size:7px;
-			z-index: 20;
-		}
-		#span_noti{
-			/*font-weight: bold;
-			opacity: 1;*/
-			cursor: hand;
-		}
-		#notification{
-			top:-10%;
-			width:300px;
-			position: absolute;
-		    left: 70%;
-			border-radius:14px;
-			/*display: none;*/
-			z-index: 20;
-			font-size: 8px;
-			border: #243F57 solid 2px;
-			opacity: 0.8;
-		}
-		.xdsoft_datetimepicker span{
-			color:black;
-			font-size: 12px;
-		}
-		body,ul,li {
-			padding:10px;
-			margin:0;
-		}
-		body{
-			font-size:12px;
-			-webkit-user-select:none;
-			-webkit-text-size-adjust:none;
-			font-family:helvetica;
-		}
-		#wrapper {
-			width:300px;
-			height:500px;
-			float:left;
-			position:relative;	/* On older OS versions "position" and "z-index" must be defined, */
-			z-index:21;			/* it seems that recent webkit is less picky and works anyway. */
-			overflow:hidden;
-			-webkit-border-radius:10px;
-			-moz-border-radius:10px;
-			-o-border-radius:10px;
-			border-radius:10px;
-		}
-		#scroller {
-			width:2100px;
-			height:100%;
-			float:left;
-			padding:0;
-		}
-		#scroller ul {
-			list-style:none;
-			display:block;
-			float:left;
-			width:100%;
-			height:100%;
-			padding:0;
-			margin:0;
-			text-align:left;
-		}
-		#scroller li {
-			-webkit-box-sizing:border-box;
-			-moz-box-sizing:border-box;
-			-o-box-sizing:border-box;
-			box-sizing:border-box;
-			display:block; float:left;
-			width:300px; height:160px;
-			text-align:center;
-			font-family:georgia;
-			font-size:18px;
-			line-height:140%;
-		}
-		#nav {
-			display: inline-block;
-			float: right;
-			/*width:300px;*/
-			text-align: center;
-		}
-		#current_page:hover{
-			color: black;
-			font-size: 80px;
-			font-weight: bolder;
-		}
-		#prev, #next {
-			cursor: pointer;
-			text-align: center;
-			float:left;
-			font-weight:bold;
-			font-size:14px;
-			padding:5px 0;
-			width:80px;
-		}
-		#next {
-			float:right;
-		}
-		#indicator, #indicator > li {
-			display:block; float:left;
-			list-style:none;
-			padding:0; margin:0;
-		}
-		#indicator {
-			width:110px;
-			padding:12px 0 0 30px;
-		}
-		#indicator > li {
-			text-indent:-9999em;
-			width:8px; height:8px;
-			-webkit-border-radius:4px;
-			-moz-border-radius:4px;
-			-o-border-radius:4px;
-			border-radius:4px;
-			background:#ddd;
-			overflow:hidden;
-			margin-right:4px;
-		}
-		#indicator > li.active {
-			background:#888;
-		}
-		#indicator > li:last-child {
-			margin:0;
-		}
-	</style>
+	<link href="assests/css/index.css" rel="stylesheet" type="text/css">
+	<link href="assests/css/reset.css" rel="stylesheet" type="text/css">
+	<link href="assests/css/laser.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="lib/jquery/jquery-ui.css">
+	<link rel="stylesheet" href="lib/jquery/jquery.datetimepicker.css">
+	<script src="lib/jquery/jquery.js"></script>
+	<script type="text/javascript" src="lib/iscroll.js"></script>
+  	<script src="lib/jquery/jquery-ui.js"></script>
+  	<script src="lib/jquery/jquery.datetimepicker.js"></script>
+  	<script src="assests/scripts/main.js"></script>
+  	<script src="assests/scripts/tool.js"></script>
 </head>
 <body onload="document.getElementById('id_search').focus();">
 <?php
@@ -243,7 +93,6 @@
 							echo '<input type="checkbox" onclick="gray('.$i.');">';
 							echo '<input id="font_color_'.$i.'" type="hidden" value="gray"><br>';
 							echo '<hr>';
-							// echo '借用物品編號:'.$e_id.'<br>';
 							echo '借用物品名稱:'.$e_name.'<br>';
 							echo '借用時間:'.$borrow_time.'<br>';
 							echo '歸還期限:'.$deadline_time.'<br>';
@@ -331,7 +180,7 @@
 	<!-- form to submit ID to id_judge.php-->
 	<span id="span_noti"><?php echo $result_count;?></span>
 	<form id="form" name="id_form" action="id_judge.php" method="POST" target="tonyy" style="margin-bottom: 0px;" autocomplete="off">
-	<img id="laser" src="img/laser.png"/>
+		<img id="laser" src="assests/resource/img/laser.png"/>
 		<input id="id_search" style="ime-mode: disabled" type="text" name="id_search" placeholder="Scan ID" value="100306082"><br>
 		<div class="submit"><input type="submit" value="" onclick="CKAddGust2('id_search','errors','id_search');" id="submit"><span class="ping1"></span><span class="ping2"></span><span class="ping3"></span></div>
 	</form>
@@ -343,10 +192,26 @@
 	</div>			
 </div>
 <iframe name="tonyy" style="display:none"></iframe>
-<img src="img/gemini22.png"  style="display:block; margin:auto; clear:both;"  height="125" width="140" >
+<img src="assests/resource/img/gemini22.png"  style="display:block; margin:auto; clear:both;"  height="125" width="140" >
 	
 	
 <script type="text/javascript">
+$(submit).on('click',function(){
+	var u_id = $('#id_search').val();
+	var opt ={
+		url : '../itlab_api/user/' + u_id,
+		method : 'get',
+		dataType : 'json'
+	}
+
+	$.ajax(opt).then(function(user){
+		window.setCookie("u_id", user.id, 1);
+		window.to('main_menu');
+	});
+
+})
+
+
 function CKAddGust2(the_value_id,div_id,the_input_id){		
 	var valuee = document.getElementById(the_value_id).value;
 	var div = document.getElementById(div_id);
@@ -490,7 +355,6 @@ $(document).ready(function(){
 	$(function() {
         $( ".datepick" ).datetimepicker({
         	formatDate:'Y-m-d',
-        	// formatTime:'H:i:s',
         });
     });
 	function gray(id){
@@ -499,7 +363,6 @@ $(document).ready(function(){
 		var submit_class = document.getElementsByClassName(submit_id);
 		id = 'list_'+id;
 		if((!document.getElementById(font_color_id).value)||(document.getElementById(font_color_id).value!='gray')){
-			// document.getElementById(id).style.color="gray";
 			document.getElementById(font_color_id).value='gray';
 			var i = submit_class.length;
 			while(i--){
@@ -508,7 +371,6 @@ $(document).ready(function(){
 			
 
 		}else{
-			// document.getElementById(id).style.color="black";
 			document.getElementById(font_color_id).value='black';
 			var i = submit_class.length;
 			while(i--){
@@ -559,8 +421,6 @@ $(document).ready(function(){
 				document.getElementById(infor_div).innerHTML="<img src='img/ajaxloader.gif' />";
 				if (xmlhttp.readyState==4 && xmlhttp.status==200){
 					array = xmlhttp.responseText.split("--");
-					// alert(array[0]);
-					// alert(array[1]);
 					document.getElementById("button_"+list_id).innerHTML=array[1];
 					document.getElementById(infor_div).innerHTML=array[0];
 				}
