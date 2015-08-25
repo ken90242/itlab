@@ -6,52 +6,114 @@ require 'lib/notorm/NotORM.php';
 $app = new \Slim\Slim();
 $dsn='mysql:dbname=itlab;host=localhost:8889';
 $pdo = new PDO($dsn, 'root', 'root');
-$itlab = new NotORM($pdo);
-// $itlab->debug = true;
-$itlab->exec("SET names 'utf8'");
+$db = new NotORM($pdo);
+$itlab->debug = true;
+$db->exec("SET names 'utf8'");
 
-$books = $itlab->user();
+// $data = array(
+//     "id" => "099129301",
+//     "name" => "王大明"
+// );
+// echo $result = $books->insert($data)
 
-foreach ($books as $book) {
-	echo "{$book["id"]} {$book["name"]} {$book["email"]}<br>";
-}
-$data = array(
-    "id" => "099129301",
-    "name" => "王大明"
-);
-echo $result = $books->insert($data);
-// print_r($itlab);
+/**
+ * 
+ *
+ *
+ *
+ *
+ **/
 
 
 
-$app->get('/', function()
-{
-    echo '<h1>Helloa World</h1>';
+$app->get('/user', function () use ($app,$db){
+    //User Select[all]
+
+    $users = array();
+    foreach ($db->user() as $data) {
+        $users[]  = array(
+            "id" => $data["id"],
+            "name" => $data["name"],
+            "email" => $data["email"],
+            "department" => $data["department"],
+            "phone" => $data["phone"],
+            "blacklisted" => $data["blacklisted"]
+        );
+    }
+    $app->response()->header("Content-Type", "application/json");
+    echo json_encode($users);
+    // echo $_GET["aa"];
 });
-// $app->get('/hello/:name', function ($name) {
-//     echo "Hello, $name";
-// });
-$app->group('/api', function () use ($app){
-    // Library group
-    $app->group('/library', function () use ($app){
-        // Get book with ID
-        $app->get('/books/:id', function ($id) {
-        	echo "/book {$id}";
-        	// echo $_GET["sort"];
-        });
 
-        // Update book with ID
-        $app->put('/books/:id', function ($id) {
-        	echo '4';
-        });
+$app->get('/user/:id', function ($id) use ($app,$db) {
+    //User Select[specific]
 
-        // Delete book with ID
-        $app->delete('/books/:id', function ($id) {
-        	echo '5';
-        });
+    $user = $db->user()->where("id", $id);
+    if ($data = $user->fetch()) {
+        echo json_encode(array(
+            "id" => $data["id"],
+            "name" => $data["name"],
+            "email" => $data["email"],
+            "department" => $data["department"],
+            "phone" => $data["phone"],
+            "blacklisted" => $data["blacklisted"]
+            ));
+    } else {
+        echo json_encode(array(
+            "status" => false,
+            "message" => "User ID $id does not exist"
+        ));
+    }
+});
 
-    });
+$app->post("/user", function () use($app, $db) {
+    //User Insert
+    $app->response()->header("Content-Type", "application/json");
+    $input_data = $app->request()->post();
+    $result = $db->$user->insert($input_data);
+    echo json_encode(array("id" => $result["id"]));
+});
 
+$app->put("/user/:id", function ($id) use ($app, $db) {
+    //User Update
+    $app->response()->header("Content-Type", "application/json");
+
+    $user = $db->user()->where("id", $id);
+
+    if ($user->fetch()) {
+        $input_data = $app->request()->put();
+        $result = $user->update($input_data);
+        echo json_encode(array(
+            "status" => (bool)$result,
+            "message" => "User updated successfully"
+            ));
+    }
+    else{
+        echo json_encode(array(
+            "status" => false,
+            "message" => "User id $id does not exist"
+        ));
+    }
+});
+
+
+$app->delete("/user/:id", function ($id) use($app, $db) {
+    //User Delete
+    $app->response()->header("Content-Type", "application/json");
+    $data = $db->user()->where("id", $id);
+    if ($data->fetch()) {
+        $result = $data->delete();
+        echo json_encode(array(
+            "status" => true,
+            "message" => "User deleted successfully"
+        ));
+    }
+    else{
+        echo json_encode(array(
+            "status" => false,
+            "message" => "User id $id does not exist"
+        ));
+    }
 });
 
 $app->run();
