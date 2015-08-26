@@ -63,6 +63,33 @@ $app->get('/equipment', function () use ($app,$db){
     echo json_encode($equipments);
 });
 
+$app->get('/trade', function () use ($app,$db){
+    //User Select[all]
+    $trade = $db->trade();
+
+    if(isset($_GET['u_id'])) {
+        $trade->where("u_id", $_GET['u_id']);
+    }
+    $trades = array();
+    foreach ( $trade as $data) {
+        $trades[]  = array(
+            "id" => $data["id"],
+            "u_id" => $data["u_id"],
+            "e_id" => $data["e_id"],
+            "time" => $data["time"],
+            "deadline_time" => $data["deadline_time"],
+            "delaytimes" => $data["delaytimes"],
+            "return_time" => $data["return_time"],
+            "t_status" => $data["t_status"],
+            "handler" => $data["handler"],
+            "e_addition" => $data["e_addition"],
+            "e_addition_class" => $data["e_addition_class"],
+        );
+    }
+    $app->response()->header("Content-Type", "application/json");
+    echo json_encode($trades);
+});
+
 $app->get('/user/:id', function ($id) use ($app,$db) {
     $user = $db->user()->where("id", $id);
     if ($data = $user->fetch()) {
@@ -76,15 +103,15 @@ $app->get('/user/:id', function ($id) use ($app,$db) {
         ));
     } else {
         echo json_encode(array(
-            "status" => false,
+            "error" => true,
             "message" => "User ID $id does not exist"
         ));
     }
 });
 
 $app->get('/equipment/:id', function ($id) use ($app,$db) {
-    $user = $db->equipment()->where("id", $id);
-    if ($data = $user->fetch()) {
+    $equipment = $db->equipment()->where("id", $id);
+    if ($data = $equipment->fetch()) {
         echo json_encode(array(
             "id" => $data["id"],
             "name" => $data["name"],
@@ -95,7 +122,31 @@ $app->get('/equipment/:id', function ($id) use ($app,$db) {
         ));
     } else {
         echo json_encode(array(
-            "status" => false,
+            "error" => true,
+            "message" => "Equipment ID $id does not exist"
+        ));
+    }
+});
+
+$app->get('/trade/:id', function ($id) use ($app,$db) {
+    $trade = $db->trade()->where("id", $id);
+    if ($data = $trade->fetch()) {
+        echo json_encode(array(
+            "id" => $data["id"],
+            "u_id" => $data["u_id"],
+            "e_id" => $data["e_id"],
+            "time" => $data["time"],
+            "deadline_time" => $data["deadline_time"],
+            "delaytimes" => $data["delaytimes"],
+            "return_time" => $data["return_time"],
+            "t_status" => $data["t_status"],
+            "handler" => $data["handler"],
+            "e_addition" => $data["e_addition"],
+            "e_addition_class" => $data["e_addition_class"],
+        ));
+    } else {
+        echo json_encode(array(
+            "error" => true,
             "message" => "Equipment ID $id does not exist"
         ));
     }
@@ -119,13 +170,13 @@ $app->put("/user/:id", function ($id) use ($app, $db) {
         $input_data = $app->request()->put();
         $result = $user->update($input_data);
         echo json_encode(array(
-            "status" => (bool)$result,
+            "error" => !(bool)$result,
             "message" => "User updated successfully"
             ));
     }
     else{
         echo json_encode(array(
-            "status" => false,
+            "error" => true,
             "message" => "User id $id does not exist"
         ));
     }
@@ -139,13 +190,13 @@ $app->delete("/user/:id", function ($id) use($app, $db) {
     if ($data->fetch()) {
         $result = $data->delete();
         echo json_encode(array(
-            "status" => true,
+            "error" => false,
             "message" => "User deleted successfully"
         ));
     }
     else{
         echo json_encode(array(
-            "status" => false,
+            "error" => true,
             "message" => "User id $id does not exist"
         ));
     }
