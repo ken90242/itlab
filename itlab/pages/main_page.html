@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="refresh" content="301"; charset="UTF-8">
+		<link href="../assests/css/main_menu.css" rel="stylesheet" type="text/css">
+		<link href="../assests/css/reset.css" rel="stylesheet" type="text/css">
+		<link href="../assests/css/laser.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<script src="../lib/jquery/jquery.js"></script>
+		<script src="../assests/scripts/main.js"></script>
+  		<script src="../assests/scripts/tool.js"></script>
+	</head>
+	<body onload="document.getElementById('equipment_search').focus()">
+	<div class="container">
+		<div class="row-fluid">
+			<div id="sign_up" style="display:none;"  >
+					<i id="haha" class="fa fa-remove fa-2x" onclick="ray.notshow()"></i>
+					<br><br>
+					<ul id="out"></ul><label style="color: gray;">&nbsp;&nbsp;|&nbsp;&nbsp;</label><label id="money" style="color: #d57499;">處理中...請稍候</label><br><br>
+					<label id="back_c"></label><label id="back"></label>&nbsp;&nbsp;|&nbsp;&nbsp;<label id="money_back" style="color: #d57499;">處理中...請稍候</label><br><br>
+					<label id="out_deadline">處理中...請稍候</label><label style="color: gray;">&nbsp;&nbsp;|&nbsp;&nbsp;</label><label style="color: #d57499;" id="fine">處理中...請稍候</label><br>
+					<hr style="border-color: black;">
+					<label style="color: red;" id="final_account">處理中...請稍候</label><br>
+					<div id="txtraa" align="left">
+					1.請確認器材使用人為借用或歸還本人身份 。<br>
+					2.借用器材時押證件或學生證於數為平台，於歸還時清點無誤、點收人簽收，完成歸還程序後始返還證件或學生證。<br>
+					3.如有器材損壞，除需扣除押金，並視情況需負責額外修復或損壞賠償之責任。<br>
+					4.如未依規定時間內歸還者，將沒收押金。<br> 
+					5.未遵守規定者除以上條款，將列入借用黑名單。<br> 
+					6.被列為黑名單者，將停權一學期。</div>
+					<hr>	
+					<input id="r1" type="radio" name="i can read"><label>我同意以上條款並會負責賠償責任</label>
+					<input id="r2" type="radio" name="i can read"><label>不同意</label><br><br>
+					<input id="r3" type="checkbox">經手助理<label id='astname'></label>已確實辦理借用人<label id='usrname'></label>押證事務<br><br><hr>
+					<button id="clk" onclick="ray.judge();">確認送出</button>
+				</div>
+				<div id="lightbox-shadow" style="display:none;width: 100%; height:100%" ></div>
+				<div id="dashboard" style="float:left;width:700px">
+
+				<div>
+					<input type="button" value="回首頁" id="form3to1" name="B4" onClick="window.location='../index.php'">
+					<br/><br/>
+					<label id="u_id">學號 : </label>
+					<br/>
+					<label id="u_name">姓名 : </label>
+					<br/>
+					<label id="u_department">系所 : </label>
+					<br/>
+					<label id="u_email">E-mail : </label>
+					<br/>
+					<label id="u_phone">電話 : </label>
+				</div>
+				<hr>
+				<div>
+					<div id="form3">
+						<input id="equipment_search" style="ime-mode: disabled" type="text" placeholder="Scan ID" name="equipment_id_search_0" value="OTMCSD">
+						<input id="submit3" type="button" value="">
+						
+					</div>
+					<hr>
+					<div id="myframe"></div>
+				</div>
+			</div>
+			<div id="historyboard"  >
+				<strong>歷史紀錄</strong><br><hr>
+				<div id="trade_list" style="float:left;"></div>
+			</div>
+		</div>
+	</div>
+
+	</body>
+</html>
+	<!--
+		如果超出一定時間為動作則刪除cookie並登出
+	-->
+
+
+<script type="text/javascript">
+	$(function(){
+
+		var u_id = window.getCookie("u_id") || (function($){window.to('index')})();
+		var opt = {
+			url : '../../itlab_api/user/' + u_id,
+			method : 'get', 
+			dataType : 'json'
+		};
+		
+
+		$.ajax(opt).then(function(user) {
+			$('#usrname').text(user.name);
+			for (var prop in user) {
+				$('#u_'+prop).after(user[prop]);
+			}
+
+			if(user.blacklisted) {
+				$('#submit3, #equipment_search').forEach(function(){
+					this.disabled = true;
+				});
+				alert('Black!');
+			}
+		});
+
+		opt.url = '../../itlab_api/trade';
+		opt.data = {u_id:u_id};
+		$.ajax(opt).then(function(trade) {
+			trade.forEach(function(t) {
+				$('#trade_list').append(
+					"<label style='font-size:10px'>" + t.time + " ~ " + t.return_time + "</label><br/>" +
+					"<a href=\"#"+ t.id +"\">" + t.e_id + "</a><hr>"
+				);
+			});
+		});	
+		
+	});
+
+	$('#submit3').on('click', function(){
+		var e_id = $('#equipment_search').val();
+
+		if(/^\s+$/.test(e_id)) {
+			$('#equipment_search').focus();
+			$('#equipment_search').val('');
+			return false;
+		}
+
+		if(e_id === '' && !MYAPP.EquipmentListIsEmpty()) {
+			$('#lightbox-shadow').show();
+			$('#sign_up').show();
+
+			//Setting Trade-cart Display Screen
+			(function(){
+				if(MYAPP.getEquipments()[0].length <= 0) {
+					$('#out').append('無');
+				}
+				if(MYAPP.getEquipments()[1].length <= 0) {
+					$('#back').append('無');
+				}
+				MYAPP.getEquipments()[0].forEach(function(equ,index,arr) {
+					$('#out').append((index+1) + '. ' + equ.name + '<br/>');
+				});
+				MYAPP.getEquipments()[1].forEach(function(equ,index,arr) {
+					$('#back').append((index+1) + '. ' + equ.name);
+				});
+			})();
+
+			return;
+		}
+
+		var opt = {
+			url : '../../itlab_api/equipment/' + e_id,
+			method : 'get', 
+			dataType : 'json',
+		};
+
+		$.ajax(opt).then(function(equipment) {
+			$('#equipment_search').val('');
+			if(!equipment.error){
+				$('#myframe').append(window.creatEquipmentNode(equipment));
+			}else{
+				console.log(equipment.message);
+			}
+		});		
+	});
+
+
+
+
+
+
+	var ray={
+		judge:function(){ //confirm if the user check the agree button indeed
+			if((this.getid('r1').checked)&&(this.getid('r3').checked)){
+				document.getElementById('sign_up').style.display='none';
+				document.getElementById('lightbox-shadow').style.display='none';
+				document.getElementById('frame').contentWindow.document.getElementById('childform').submit();
+			}
+			else if((!this.getid('r1').checked)||(!this.getid('r3').checked)){
+				alert('請確實勾選同意條款以及押證確認!');
+			}
+			else{
+				alert('unpredictable mistakes happen');
+			}
+		},
+		notshow:function(){ //clear the agree button status, final check form and shadow
+			$('#out').text('');
+			$('#back').text('');
+			this.getid('sign_up').style.display='none';
+			this.getid('lightbox-shadow').style.display='none';
+			this.getid('r1').checked="";
+			this.getid('r2').checked="";
+			this.getid('r3').checked="";
+		},
+		getid:function(id){
+			return document.getElementById(id);
+		}
+	}
+function expand_subobj(sub_div_id){
+	if(document.getElementById(sub_div_id).style.display=='none'){
+		// document.getElementById('img_'+sub_div_id).src='img/prolong.png';
+		document.getElementById(sub_div_id).style.display='block';
+	}else{
+		// document.getElementById('img_'+sub_div_id).src='img/pre_prolong.png';
+		document.getElementById(sub_div_id).style.display='none';
+	}
+	
+}
+
+function CKAddGust1(the_value_id,div_id,input_id){ //check if it's blank
+	var valuee = document.getElementById(the_value_id).value;
+	var div = document.getElementById(div_id);
+	if(valuee == ""){
+		document.getElementById(input_id).focus();
+		div.textContent = "請填寫[器材id]欄位!";
+		div.style.color = "red";
+		event.returnValue = false;
+	}
+	else{
+		div.textContent = "";
+		var equ_id1 = document.getElementById("equipment_search_1").value;
+		var subc_obj = document.getElementById("frame").contentDocument.getElementsByClassName("i_subcategory");
+		var subc_obj_value="";
+		
+		if(subc_obj==null){
+			nochongfu(valuee,equ_id1);
+		}
+		if (typeof subc_obj != "undefined") {
+			for(var i =0 ;i<subc_obj.length;i++){
+				par_id = document.getElementById("frame").contentDocument.getElementsByName("equ_id"+subc_obj[i].parentNode.id.split("divv")[1])[0].value
+				subc_obj_value = subc_obj_value+"|"+par_id+"|"+subc_obj[i].value;
+			}
+			send_object(subc_obj_value,equ_id1,valuee);
+			event.returnValue = false;
+		}
+		
+	}
+}
+function nochongfu (the_value,the_equ_id) { //check if it's duplicate
+	var search = 'equ_val'+the_value;
+	var multi_search = 'equ_multi'+the_value;
+	if(document.getElementById('frame').contentWindow.document.getElementById(search)){
+		if(!document.getElementById('frame').contentWindow.document.getElementById(multi_search)){
+			alert('已輸入過此euqipment_id'); //可以改成其他方式呈現錯誤
+			event.returnValue = false;
+			return;
+		}
+	}	
+	document.getElementById("form3").submit();
+}
+function send_object(value,equ_id,valuee){
+	var xmlhttp;
+	if(window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function(){
+		var arr = document.getElementById("frame").contentDocument.getElementsByClassName("blink");
+		
+		for(var i=0;i<arr.length;i++){
+			arr[i].src = "img/wait.gif";
+		}
+		for(var i=arr.length-1;i>=0;i--){
+			arr[i].className = "waiting";
+		}
+		if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			if(xmlhttp.responseText=='ERRor!'){
+				if(document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid")){
+					var label_subid_arr = document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid");
+					for(var i=0;i<label_subid_arr.length;i++){
+						if(label_subid_arr[i].innerText.split("[")[0]==equ_id) {
+							alert('子類別已輸入過此euqipment_id'); //可以改成其他方式呈現錯誤
+							var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
+							for(var i=0;i<arr.length;i++){
+								arr[i].src = "img/question.png";
+							}
+							for(var i=arr.length-1;i>=0;i--){
+								arr[i].className = "blink";
+							}
+							event.returnValue = false;
+							return;
+						}
+					}
+				}
+				nochongfu(valuee,equ_id);
+			}else{
+				if(document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid")){
+					var label_subid_arr = document.getElementById('frame').contentWindow.document.getElementsByClassName("label_subid");
+					for(var i=0;i<label_subid_arr.length;i++){
+						if(label_subid_arr[i].innerText.split("[")[0]==equ_id) {
+							alert('子類別已輸入過此euqipment_id'); //可以改成其他方式呈現錯誤
+							var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
+							for(var i=0;i<arr.length;i++){
+								arr[i].src = "img/question.png";
+							}
+							for(var i=arr.length-1;i>=0;i--){
+								arr[i].className = "blink";
+							}
+							event.returnValue = false;
+							return;
+						}
+					}
+				}
+				var equ_arr = xmlhttp.responseText.split(";");
+				var e_class = equ_arr[0];
+				var e_id = equ_arr[1];
+				var e_name = equ_arr[2];
+				var text = e_id+"["+e_name+"]";
+				var position=1;
+				var sub_c_val="";
+				var sub_c_arr = document.getElementById("frame").contentDocument.getElementsByClassName("i_subcategory");
+				for(var i=0;i<sub_c_arr.length;i++){
+					if(sub_c_arr[i].value.indexOf(e_class) > -1){
+						sub_c_val = sub_c_arr[i].value.replace(e_class+";","")
+						position = i;
+						break;
+					}
+				}
+
+
+				sub_c_arr[position].value = sub_c_val;
+				sub_c_arr[position].parentNode.querySelectorAll('[name=lbl_'+e_class+']')[0].innerText=text;
+				sub_c_arr[position].parentNode.querySelectorAll('[name=lbl_'+e_class+']')[0].style.color="blue";
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].className = "ok";
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].src = "img/ok.png";
+				
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].className="cancel-enable";
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].setAttribute("value",equ_arr[4]);
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].removeAttribute("disabled");
+				sub_c_arr[position].parentNode.querySelectorAll('[name=img_'+e_class+']')[0].parentNode.querySelectorAll('input[type=image]')[0].style.cursor="hand";
+
+
+				var arr = document.getElementById("frame").contentDocument.getElementsByClassName("waiting");
+				for(var i=0;i<arr.length;i++){
+					arr[i].src = "img/question.png";
+				}
+				for(var i=arr.length-1;i>=0;i--){
+					arr[i].className = "blink";
+				}
+				var new_object = document.createElement('div');
+				new_object.setAttribute("id", equ_arr[4]);
+				new_object.setAttribute("class", sub_c_arr[position].parentNode.id);		
+				var object = document.getElementById("frame").contentDocument.getElementById("childform").insertBefore(new_object,document.getElementById("frame").contentDocument.getElementById("adot"));
+				object.innerHTML=equ_arr[3];
+			}			
+		}
+	}
+	xmlhttp.open("GET","object_subajax.php?sub_c="+value+"&e_id="+equ_id,true);
+	xmlhttp.send();
+}
+</script>

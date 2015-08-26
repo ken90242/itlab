@@ -1,7 +1,6 @@
 <?php
 	session_start();
 	session_destroy();	
-	header('Content-type: text/html;charset=utf-8');
 ?>
 <html>
 <head>
@@ -182,9 +181,9 @@
 	<form id="form" name="id_form" action="id_judge.php" method="POST" target="tonyy" style="margin-bottom: 0px;" autocomplete="off">
 		<img id="laser" src="assests/resource/img/laser.png"/>
 		<input id="id_search" style="ime-mode: disabled" type="text" name="id_search" placeholder="Scan ID" value="100306082"><br>
-		<div class="submit"><input type="submit" value="" onclick="CKAddGust2('id_search','errors','id_search');" id="submit"><span class="ping1"></span><span class="ping2"></span><span class="ping3"></span></div>
+		<div><input type="submit" value="" onclick="CKAddGust2('id_search','errors','id_search');" id="submit"></div>
 	</form>
-	<input id="snowman" type="button" placeholder="" onClick="window.location='main_console/index.php'">
+	<div class="submit"><input id="snowman" type="button" placeholder="" onClick="window.location='main_console/index.php'"><span class="ping1"></span><span class="ping2"></span><span class="ping3"></span></div>
 	<!-- show the ID debug info -->
 	<div id="errors"></div>
 	<div>
@@ -196,17 +195,36 @@
 	
 	
 <script type="text/javascript">
-$(submit).on('click',function(){
+$(function(){
+	$('.submit').on('mouseover', function() {
+		$('.ping1').css("border-color", "#243F57");//#243F57
+		$('.ping2').css("border-color", "#243F57");//#243F57
+		$('.ping3').css("border-color", "#243F57");//#243F57
+		$('.ping1').show();
+		$('.ping2').show();
+		$('.ping3').show();
+	});
+	$('.submit').on('mouseout', function() {
+		$('.ping1').css("border-color", "transparent");//#243F57
+		$('.ping2').css("border-color", "transparent");//#243F57
+		$('.ping3').css("border-color", "transparent");//#243F57
+		// $('.ping1').show();
+		// $('.ping2').show();
+		// $('.ping3').show();
+	});
+
+})
+$(submit).on('click', function() {
 	var u_id = $('#id_search').val();
-	var opt ={
+	var opt = {
 		url : '../itlab_api/user/' + u_id,
-		method : 'get',
+		method : 'get', 
 		dataType : 'json'
 	}
 
-	$.ajax(opt).then(function(user){
+	$.ajax(opt).then(function(user) {
 		window.setCookie("u_id", user.id, 1);
-		window.to('main_menu');
+		window.to('pages/main_page.html');
 	});
 
 })
@@ -221,7 +239,7 @@ function CKAddGust2(the_value_id,div_id,the_input_id){
 		div.style.color = "red";
 		event.returnValue = false;
 	}
-	else if((valuee == '1152542')|| (valuee == '01152542')){
+	else if((valuee == '1152542')|| (valuee == 'error-0xe01a000f152542')){
 		valuee = '1152542';
 		event.returnValue = true;
 	}
