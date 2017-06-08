@@ -1,6 +1,7 @@
 # itlab
-Itlab project for JiangDao
-##Purpose
+#### STILL DEVELOPING!
+Itlab project
+## Purpose
 To rebuild the item-transaction system by the following stanadard
 
   - Restful api
