@@ -1,5 +1,5 @@
 # itlab
-#### STILL DEVELOPING!
+#### (Developing) ####
 Itlab project
 ## Purpose
 To rebuild the item-transaction system by the following stanadard
